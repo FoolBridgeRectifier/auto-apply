@@ -1,0 +1,20 @@
+{
+  "name": "auto-apply",
+  "version": "1.0.0",
+  "main": "index.ts",
+  "license": "MIT",
+  "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "@types/node": "^25.0.9",
+    "playwright-extra": "^4.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  },
+  "scripts": {
+    "postinstall": "npx playwright install",
+    "start": "playwright test",
+    "launch-browser": "start chrome --remote-debugging-port=9222 --user-data-dir=C:\\temp\\chrome_dev_profile"
+  },
+  "dependencies": {
+    "date-fns": "^4.1.0"
+  }
+}

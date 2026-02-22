@@ -1,0 +1,99 @@
+{
+  "text": {
+    "include": [
+      {
+        "label": "address line 1*",
+        "value": "1644 Gleneagle Rd"
+      },
+      {
+        "label": "current company\"*\"",
+        "value": "N/A"
+      },
+      {
+        "label": "in 3–4 sentences, describe how you use (or choose not to use) ai tools in your work.\"*\"",
+        "value": "I use AI tools to speed up everyday tasks like code scaffolding refactoring and writing tests while still reviewing everything carefully before it reaches production. For example AI has helped me quickly refactor large React components and identify edge cases during performance optimization. I choose not to rely on AI for core system design security sensitive logic or final architectural decisions where context and judgment matter most. I see AI as a support tool rather than a replacement for engineering responsibility."
+      },
+      {
+        "label": "react experience\"*\"",
+        "value": "I have 6+ years of hands-on experience building and maintaining large React applications in production. I work extensively with hooks context API and state management to create reusable components and shared libraries. I also focus on performance accessibility and clean architecture while working closely with design and product teams."
+      },
+      {
+        "label": "name\"*\"",
+        "value": "Sathyanarayanan S"
+      }
+    ],
+    "exclude": []
+  },
+  "dropdown": {
+    "include": [
+      {
+        "label": "state*",
+        "value": "Maryland"
+      },
+      {
+        "label": "have you previously worked for this organization? if yes, please answer the questions below. if no, please continue to the next page.*",
+        "value": "no"
+      },
+      {
+        "label": "phone device type*",
+        "value": "Mobile"
+      },
+      {
+        "label": "degree*",
+        "value": "Master’s Degree or Equivalent Degree"
+      },
+      {
+        "label": "are you legally authorized to work in the united states?*",
+        "value": "Yes"
+      },
+      {
+        "label": "do you have any commitments or agreements with other employers that might affect your employment with relx, inc. or any of its subsidiaries (lexisnexis, elsevier, reed exhibitions, reed business, risk solutions)?*",
+        "value": "No"
+      },
+      {
+        "label": "please select a veteran status*",
+        "value": "English"
+      },
+      {
+        "label": "have you ever been employed by guidehouse or any of their subsidiaries?*",
+        "value": "no"
+      },
+      {
+        "label": "work authorization\"*\"",
+        "value": "i require/will require now or in the future scribd's sponsorship to obtain work authorization in the country in which this position is based (e.g h-1b, tn, f1 etc.)"
+      },
+      {
+        "label": "are you currently based in a location where scribd is able to employ you? employees must have their primary residence in or near one of the following cities (including surrounding metro areas within typical commuting distance)\"*\"",
+        "value": "yes - i currently reside in one of them."
+      },
+      {
+        "label": "this role is required to be based in austin, tx. are you currently located in the austin area or willing to relocate?\"*\"",
+        "value": "i am willing to relocate."
+      },
+      {
+        "label": "work status\"*\"",
+        "value": "i am authorized to work in the united states."
+      },
+      {
+        "label": "do you now or in the future require a visa work sponsorship to continue working in the united states?\"*\"",
+        "value": "yes, i will require sponsorship to continue working now or in the future."
+      }
+    ],
+    "exclude": []
+  },
+  "radio": {
+    "include": [
+      {
+        "label": "yes - i consent to receiving text messages",
+        "value": ""
+      },
+      {
+        "label": "i currently work here",
+        "value": ""
+      }
+    ],
+    "exclude": [
+      "i currently work here"
+    ]
+  }
+}
