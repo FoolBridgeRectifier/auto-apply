@@ -106,6 +106,7 @@ export const getRequiredInputs = async (
             (type) => `:is([type="${type}"])`,
           )}, textarea)`,
         )
+        .first()
         .isVisible(TIMEOUTS.FIND)
     ) {
       textInputLocators = await page
@@ -174,7 +175,7 @@ export const getRequiredInputs = async (
         .all();
     }
   } catch (e) {
-    console.error("NO_TEXT_INPUTS");
+    console.error("NO_RADIO_INPUTS");
   }
 
   for (const radioLocator of radioLocators) {
