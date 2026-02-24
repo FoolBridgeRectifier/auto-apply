@@ -1,13 +1,13 @@
-import { Page } from "@playwright/test";
-import { generalFill } from "../application-flows";
-import { TIMEOUTS } from "../../config";
+import { Page } from '@playwright/test';
+import { generalFill } from '../application-flows';
+import { TIMEOUTS } from '../../config';
 import {
   clickFillButtonStyle,
   counterStyle,
   overlayDivStyle,
   toggleButtonStyle,
-} from "./styles";
-import { syncFile } from "./helpers";
+} from './styles';
+import { syncFile } from './helpers';
 
 declare global {
   interface Window {
@@ -24,7 +24,7 @@ declare global {
 }
 
 // module-level autoplay state and accessor/mutator
-let autoplay = true;
+let autoplay = false;
 export const syncedData = syncFile();
 let applicationsTotal = syncedData.applicationsTotal;
 let applicationsToday = syncedData.applicationsToday;
@@ -41,13 +41,13 @@ export const setAutoplay = (updatedAutoplay: boolean) => {
 
 const exposeAutoplayCallbacks = async (page: Page) => {
   const alreadyExposed = await page.evaluate(() =>
-    Boolean(window.getAutofillAutoplay),
+    Boolean(window.getAutofillAutoplay)
   );
   if (!alreadyExposed) {
     try {
-      await page.exposeFunction("getAutofillAutoplay", async () => autoplay);
-      await page.exposeFunction("setAutofillAutoplay", async (v?: boolean) => {
-        if (typeof v === "boolean") autoplay = v;
+      await page.exposeFunction('getAutofillAutoplay', async () => autoplay);
+      await page.exposeFunction('setAutofillAutoplay', async (v?: boolean) => {
+        if (typeof v === 'boolean') autoplay = v;
         else autoplay = !autoplay;
         return autoplay;
       });
@@ -62,8 +62,8 @@ const exposeGeneralFill = async (page: Page) => {
   if (!alreadyExposed) {
     try {
       await page.exposeFunction(
-        "generalFill",
-        async () => await generalFill(page),
+        'generalFill',
+        async () => await generalFill(page)
       );
     } catch {
       // ignore races
@@ -84,42 +84,42 @@ const injectButtons = async (page: Page) => {
     }) => {
       if (!document.getElementById(overlayDivStyle.id)) {
         // Counter
-        const counter = document.createElement("div");
+        const counter = document.createElement('div');
         counter.id = counterStyle.id;
 
-        const totalCounter = document.createElement("div");
+        const totalCounter = document.createElement('div');
         totalCounter.textContent = `total: ${applicationsTotal.toString()}`;
 
-        const todayCounter = document.createElement("div");
+        const todayCounter = document.createElement('div');
         todayCounter.textContent = `today: ${applicationsToday.toString()}`;
 
         counter.appendChild(totalCounter);
         counter.appendChild(todayCounter);
 
         // overlay container
-        const overlay = document.createElement("div");
+        const overlay = document.createElement('div');
         overlay.id = overlayDivStyle.id;
 
         // buttons
-        const toggleButton = document.createElement("button");
+        const toggleButton = document.createElement('button');
         toggleButton.id = toggleButtonStyle.id;
         toggleButton.textContent = autoplay
           ? toggleButtonStyle.textContent.pause
           : toggleButtonStyle.textContent.play;
-        toggleButton.addEventListener("click", async () => {
+        toggleButton.addEventListener('click', async () => {
           toggleButton.textContent = (await window.setAutofillAutoplay?.())
             ? toggleButtonStyle.textContent.pause
             : toggleButtonStyle.textContent.play;
         });
 
-        const clickButton = document.createElement("button");
+        const clickButton = document.createElement('button');
         clickButton.id = clickFillButtonStyle.id;
         clickButton.textContent = clickFillButtonStyle.textContent;
-        clickButton.addEventListener("click", () => {
+        clickButton.addEventListener('click', () => {
           window.generalFill?.();
         });
 
-        const styleElement = document.createElement("style");
+        const styleElement = document.createElement('style');
         styleElement.textContent = [
           overlayDivStyle,
           toggleButtonStyle,
@@ -129,9 +129,9 @@ const injectButtons = async (page: Page) => {
           .map(
             ({ id, style }) => `#${id}{
             ${style}
-          }`,
+          }`
           )
-          .join("\n");
+          .join('\n');
 
         overlay.appendChild(toggleButton);
         overlay.appendChild(clickButton);
@@ -149,7 +149,7 @@ const injectButtons = async (page: Page) => {
       applicationsTotal,
       applicationsToday,
       autoplay,
-    },
+    }
   );
 };
 
@@ -159,20 +159,20 @@ const setupOnKeyPress = async (page: Page) => {
 
     // Trigger autofill on Shift+1 (i.e. "!" or Shift+1)
     const handler = (e: KeyboardEvent) => {
-      const isShift1 = e.key === "!" || (e.key === "1" && e.shiftKey);
+      const isShift1 = e.key === '!' || (e.key === '1' && e.shiftKey);
       if (isShift1) {
         window.generalFill?.();
       }
     };
 
-    document.addEventListener("keydown", handler);
+    document.addEventListener('keydown', handler);
     window.__autofill_key_listener_added = true;
   });
 };
 
 const attachElements = async (page: Page) => {
   try {
-    await page.waitForLoadState("domcontentloaded", TIMEOUTS.PAGE_START);
+    await page.waitForLoadState('domcontentloaded', TIMEOUTS.PAGE_START);
   } catch {}
 
   await exposeGeneralFill(page);
@@ -183,13 +183,13 @@ const attachElements = async (page: Page) => {
 
 const exposeAttachElements = async (page: Page) => {
   const alreadyExposed = await page.evaluate(() =>
-    Boolean(window.attachElements),
+    Boolean(window.attachElements)
   );
   if (!alreadyExposed) {
     try {
       await page.exposeFunction(
-        "attachElements",
-        async () => await attachElements(page),
+        'attachElements',
+        async () => await attachElements(page)
       );
     } catch {
       // ignore races
@@ -198,14 +198,14 @@ const exposeAttachElements = async (page: Page) => {
 };
 
 const setupNavigationHandlers = async (page: Page) => {
-  page.on("popup", async (popup) => attachElements(popup));
-  page.on("framenavigated", async (frame) => {
+  page.on('popup', async (popup) => attachElements(popup));
+  page.on('framenavigated', async (frame) => {
     if (frame === page.mainFrame()) await attachElements(page);
   });
-  page.context().on("page", async (popup) => attachElements(popup));
+  page.context().on('page', async (popup) => attachElements(popup));
 
   await page.evaluate(() => {
-    const patch = (objName: "pushState" | "replaceState", orig: Function) => {
+    const patch = (objName: 'pushState' | 'replaceState', orig: Function) => {
       const original = orig.bind(history);
       history[objName] = async function (...args: any[]) {
         const res = original(...args);
@@ -214,16 +214,16 @@ const setupNavigationHandlers = async (page: Page) => {
       };
     };
 
-    patch("pushState", history.pushState);
-    patch("replaceState", history.replaceState);
-    window.addEventListener("popstate", async () => {
+    patch('pushState', history.pushState);
+    patch('replaceState', history.replaceState);
+    window.addEventListener('popstate', async () => {
       window.attachElements && (await window.attachElements());
     });
 
     const observer = new MutationObserver(async () => {
       if (
-        !document.getElementById("__autofill_btn") ||
-        !document.getElementById("__autofill_toggle")
+        !document.getElementById('__autofill_btn') ||
+        !document.getElementById('__autofill_toggle')
       ) {
         window.attachElements && (await window.attachElements());
       }
@@ -234,7 +234,7 @@ const setupNavigationHandlers = async (page: Page) => {
 
 export const autofillButton = async (
   page: Page,
-  isAutofill: boolean = true,
+  isAutofill: boolean = false
 ) => {
   autoplay = isAutofill;
   await exposeAutoplayCallbacks(page);

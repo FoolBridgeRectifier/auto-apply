@@ -1,40 +1,34 @@
-import { Locator, Page } from "@playwright/test";
-import { TIMEOUTS } from "../../../config";
+import { Locator, Page } from '@playwright/test';
+import { IDropdownComponent } from '../interfaces';
+import { dropdownComponent as defaultDropdownComponent } from '../general/components';
+import { TIMEOUTS } from '../../../config';
 
-const getAllDropdownOptions = async (dropdown: Locator) => {
-  const optionsLocators = await dropdown.locator("option").all();
-  const options = [];
-
-  for (const optionsLocator of optionsLocators) {
-    const label =
-      (await optionsLocator.textContent(TIMEOUTS.FIND))?.trim() ?? "";
-    options.push({ locator: optionsLocator, label });
-  }
-
-  return options;
-};
-
-export const dropdownComponent = {
-  allLocator: async (page: Page) => await page.locator("select").all(),
-  allOptionsLocator: async (locator: Locator) =>
-    await getAllDropdownOptions(locator),
+export const dropdownComponent: IDropdownComponent = {
+  ...defaultDropdownComponent,
   optionSelect: async (
     page: Page,
     input: { label?: string; locator: Locator },
-    selectedOption?: { label?: string; locator?: Locator },
+    selectedOption?: { label?: string; locator?: Locator }
   ) => {
     await page.waitForTimeout(30);
 
-    selectedOption?.label &&
-      (await input?.locator
-        .selectOption({ label: selectedOption.label })
-        .catch(async () => {
-          console.error(
-            "GENERAL_FILL",
-            input?.label,
-            "Option not found",
-            selectedOption.label,
-          );
-        }));
+    const selectButton = input.locator.locator('..').locator('a').first();
+    await selectButton.click(TIMEOUTS.CLICK);
+
+    await page
+      .locator('.select2-drop-active')
+      .getByText(new RegExp(selectedOption?.label as string, 'i'))
+      .first()
+      .click(TIMEOUTS.CLICK);
+  },
+  getOptionSelected: async (
+    page: Page,
+    input: { label?: string; locator: Locator }
+  ) => {
+    const value = await input.locator
+      .locator('..')
+      .locator('span[class^="select"][class$="-chosen"]')
+      .textContent();
+    return !value || value.includes('Select') ? '' : value;
   },
 };

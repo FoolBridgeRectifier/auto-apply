@@ -77,6 +77,18 @@
       {
         "label": "do you now or in the future require a visa work sponsorship to continue working in the united states?\"*\"",
         "value": "yes, i will require sponsorship to continue working now or in the future."
+      },
+      {
+        "label": "are you currently authorized to reside and work in the country where this role is based? *\n    \n    \n    \n\n\n   please select                             please selectyes\nno\nnot sure\n\n\n",
+        "value": "Yes"
+      },
+      {
+        "label": "will you now or in the future require employer sponsorship to work in that country? *\n    \n    \n    \n\n\n   please select                             please selectyes\nno\nnot sure\n\n\n",
+        "value": "Yes"
+      },
+      {
+        "label": "please let us know if you are located in any of these countries: chile, perú, méxico, colombia, uruguay, brazil or argentina *\n    \n    \n    \n\n\n   --                             --\nyes\nno\n\n\n",
+        "value": "No"
       }
     ],
     "exclude": []

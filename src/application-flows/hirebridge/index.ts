@@ -1,12 +1,16 @@
-import { Page } from "@playwright/test";
-import { selectors } from "./selectors";
-import { FORM_FIELDS, TIMEOUTS } from "../../../config";
-import { generalFill } from "../general";
-import { autofillButton } from "../../components";
+import { Page } from '@playwright/test';
+import { selectors } from './selectors';
+import { FORM_FIELDS, TIMEOUTS } from '../../../config';
+import { generalFill } from '../general';
+import { autofillButton } from '../../components';
+import { gmail_v1 } from 'googleapis';
 
-export const hirebridgeFlow = async (page: Page, emailPage: Page, chatPage: Page) => {
+export const hirebridgeFlow = async (
+  page: Page,
+  getEmail: () => Promise<gmail_v1.Schema$Message>
+) => {
   const [popupPage] = await Promise.all([
-    page.waitForEvent("popup"),
+    page.waitForEvent('popup'),
     selectors(page).applyButton.click(),
   ]);
 
@@ -16,7 +20,7 @@ export const hirebridgeFlow = async (page: Page, emailPage: Page, chatPage: Page
   await selectors(popupPage).popupCookieContinue.click(TIMEOUTS.CLICK);
   await selectors(popupPage).popupEmail.fill(
     FORM_FIELDS.PERSONAL_DETAILS.EMAIL,
-    TIMEOUTS.CLICK,
+    TIMEOUTS.CLICK
   );
   await selectors(popupPage).popupNext.click(TIMEOUTS.CLICK);
 
@@ -29,17 +33,17 @@ export const hirebridgeFlow = async (page: Page, emailPage: Page, chatPage: Page
   await selectors(popupPage).popupForm.waitFor(TIMEOUTS.PAGE_START);
 
   // fill
-  await popupPage.waitForLoadState("networkidle", TIMEOUTS.PAGE_START);
+  await popupPage.waitForLoadState('networkidle', TIMEOUTS.PAGE_START);
   await generalFill(popupPage);
 
   // fill rest
   await selectors(popupPage).sponsorshipDropdown.selectOption(
-    "Yes",
-    TIMEOUTS.CLICK,
+    'Yes',
+    TIMEOUTS.CLICK
   );
   await selectors(popupPage).signatureName.fill(
     `${FORM_FIELDS.PERSONAL_DETAILS.FIRST_NAME} ${FORM_FIELDS.PERSONAL_DETAILS.LAST_NAME}`,
-    TIMEOUTS.CLICK,
+    TIMEOUTS.CLICK
   );
 
   // submit

@@ -1,58 +1,55 @@
-import { Page } from "@playwright/test";
-import { selectors } from "./selectors";
-import { FORM_FIELDS, TIMEOUTS } from "../../../config";
-import { generalFill } from "../general";
-import { basicButtonClick } from "../../helpers";
-import { autofillButton, setAutoplay } from "../../components";
-import { filterTimesEmail } from "./helpers";
-import { IGeneralFillResponse } from "../general/interfaces";
-import { bindSaveToButton } from "../helpers";
-import { dropdownComponent } from "../general/components";
+import { Page } from '@playwright/test';
+import { selectors } from './selectors';
+import { TIMEOUTS } from '../../../config';
+import { generalFill } from '../general';
+import { autofillButton } from '../../components';
+import { IGeneralFillResponse } from '../general/interfaces';
+import { bindSaveToButton } from '../helpers';
+import { gmail_v1 } from 'googleapis';
+import { dropdownComponent } from './components';
+import { radioComponent } from '../general/components';
 
 export const greenhouseFlow = async (
   page: Page,
-  emailPage: Page,
-  chatPage: Page,
+  getEmail: () => Promise<gmail_v1.Schema$Message>
 ) => {
   try {
-    await page.waitForLoadState("domcontentloaded", TIMEOUTS.PAGE_START_SHORT);
+    await page.waitForLoadState('domcontentloaded', TIMEOUTS.PAGE_START_SHORT);
   } catch {}
 
   await autofillButton(page, false);
-  const missedQuestions: IGeneralFillResponse = await generalFill(page, {
-    resumeFileSetter: true,
-  });
+  const missedQuestions: IGeneralFillResponse = await generalFill(
+    page,
+    {
+      resumeFileSetter: true,
+    },
+    { dropdownComponent, radioComponent }
+  );
 
   await bindSaveToButton(
-    "saveOnSubmit",
+    'saveOnSubmit',
     page,
     selectors(page).submitApplicationButton.last(),
     missedQuestions,
-    dropdownComponent,
+    dropdownComponent
   );
 
-  // try {
-  //   await selectors(page).securityCodeInput.waitFor({
-  //     state: "visible",
-  //     timeout: 0,
-  //   });
+  try {
+    await selectors(page).securityCodeInput.waitFor({
+      state: 'visible',
+      timeout: 0,
+    });
 
-  //   const times = filterTimesEmail();
-  //   await emailPage
-  //     .getByText(new RegExp(times, "i"))
-  //     .first()
-  //     .isVisible(TIMEOUTS.PAGE_START);
-  //   const code =
-  //     await selectors(emailPage).extractSecurityCodeFromInstruction();
+    const email = await getEmail();
+    const code = (email.snippet || '').match(
+      /application: ([a-zA-Z0-9]+)/
+    )?.[1];
 
-  //   if (code) {
-  //     await selectors(page).securityCodeInput.fill(code);
-  //   }
-  //   await selectors(page).submitApplicationButton.click();
-  // } catch (e) {
-  //   console.log("GG", e);
-  // }
+    if (code) {
+      await selectors(page).securityCodeInput.fill(code);
+    }
+    await selectors(page).submitApplicationButton.click();
+  } catch (e) {
+    console.log('GG', e);
+  }
 };
-
-
-

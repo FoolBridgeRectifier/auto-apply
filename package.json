@@ -21,6 +21,10 @@
     "launch-browser": "start chrome --remote-debugging-port=9222 --user-data-dir=C:\\temp\\chrome_dev_profile"
   },
   "dependencies": {
-    "date-fns": "^4.1.0"
+    "@google-cloud/local-auth": "^2.1.0",
+    "date-fns": "^4.1.0",
+    "googleapis": "^105.0.0",
+    "mammoth": "^1.11.0",
+    "ollama": "^0.6.3"
   }
 }

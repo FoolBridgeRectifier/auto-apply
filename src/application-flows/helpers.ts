@@ -1,11 +1,11 @@
-import path from "path";
-import fs from "fs";
-import { IDropdownComponent, ISavedAnswers } from "./interfaces";
-import { filterAlNums } from "./general/helpers";
-import { IGeneralFillResponse } from "./general/interfaces";
-import { Locator, Page } from "@playwright/test";
-import { INPUT_TYPES } from "../enums";
-import { dropdownComponent as defaultDropdownComponent } from "./general/components";
+import path from 'path';
+import fs from 'fs';
+import { IDropdownComponent, ISavedAnswers } from './interfaces';
+import { filterAlNums } from './general/helpers';
+import { IGeneralFillResponse } from './general/interfaces';
+import { Locator, Page } from '@playwright/test';
+import { INPUT_TYPES } from '../enums';
+import { dropdownComponent as defaultDropdownComponent } from './general/components';
 
 declare global {
   interface Window {
@@ -19,13 +19,13 @@ const defaultData: ISavedAnswers = {
   radio: { include: [], exclude: [] },
 };
 
-const dataPath = path.join(__dirname, "../../data/savedAnswers.json");
+const dataPath = path.join(__dirname, '../../data/savedAnswers.json');
 
 let data: ISavedAnswers = { ...defaultData };
 
 const loadFromDisk = () => {
   try {
-    const fileContent = fs.readFileSync(dataPath, "utf-8");
+    const fileContent = fs.readFileSync(dataPath, 'utf-8');
     data = JSON.parse(fileContent);
   } catch {
     data = { ...defaultData };
@@ -36,38 +36,38 @@ const writeToDisk = () => {
   try {
     fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
   } catch (err) {
-    console.warn("syncSavedAnswers: write failed", err);
+    console.warn('syncSavedAnswers: write failed', err);
   }
 };
 
 loadFromDisk();
 
 const savedAnswersState = {
-  getSavedAnswer: (label: string, type: "text" | "dropdown" | "radio") => {
+  getSavedAnswer: (label: string, type: 'text' | 'dropdown' | 'radio') => {
     if (
       data[type].exclude.some((excludeLabel) =>
-        new RegExp(filterAlNums(excludeLabel), "i").test(filterAlNums(label)),
+        new RegExp(filterAlNums(excludeLabel), 'i').test(filterAlNums(label))
       )
     ) {
       return;
     }
 
     const formValue = data[type].include.find(({ label: includeLabel }) =>
-      new RegExp(filterAlNums(includeLabel), "i").test(filterAlNums(label)),
+      new RegExp(filterAlNums(includeLabel), 'i').test(filterAlNums(label))
     );
 
     return formValue
       ? {
-          matcher: new RegExp(filterAlNums(formValue.label), "i"),
+          matcher: new RegExp(filterAlNums(formValue.label), 'i'),
           value: formValue.value,
-          optionMatcher: new RegExp(filterAlNums(formValue.value), "i"),
+          optionMatcher: new RegExp(filterAlNums(formValue.value), 'i'),
         }
       : undefined;
   },
 
   setSavedAnswer: (
     answerToSave: { label: string; value: string },
-    type: "text" | "dropdown" | "radio",
+    type: 'text' | 'dropdown' | 'radio'
   ) => {
     data[type].include.push(answerToSave);
     writeToDisk();
@@ -89,17 +89,17 @@ export const syncSavedAnswers = () => savedAnswersState;
 export const waitForFilled = async (
   page: Page,
   missedFields: IGeneralFillResponse,
-  dropdownComponent: IDropdownComponent = defaultDropdownComponent,
+  dropdownComponent: IDropdownComponent = defaultDropdownComponent
 ) => {
   for (const field of missedFields.dropdown) {
     try {
-      if ("type" in field) {
+      if ('type' in field) {
         savedAnswersState.setSavedAnswer(
           {
             label: field.label,
             value: await dropdownComponent.getOptionSelected(page, field),
           },
-          INPUT_TYPES.DROPDOWN,
+          INPUT_TYPES.DROPDOWN
         );
       } else {
         const options = [];
@@ -116,13 +116,13 @@ export const waitForFilled = async (
         savedAnswersState.setSavedAnswer(
           {
             label: field.radioLabel,
-            value: value?.label || "",
+            value: value?.label || '',
           },
-          INPUT_TYPES.DROPDOWN,
+          INPUT_TYPES.DROPDOWN
         );
       }
     } catch {
-      console.error("Cannot save Field", field);
+      console.error('Cannot save Field', field);
     }
   }
 
@@ -134,13 +134,13 @@ export const waitForFilled = async (
         savedAnswersState.setSavedAnswer(
           {
             label: field.label,
-            value: "",
+            value: '',
           },
-          INPUT_TYPES.RADIO,
+          INPUT_TYPES.RADIO
         );
       }
     } catch {
-      console.error("Cannot save Field", field);
+      console.error('Cannot save Field', field);
     }
   }
 
@@ -151,36 +151,34 @@ export const waitForFilled = async (
           (el) => {
             return el && (el as HTMLInputElement).value;
           },
-          await field.locator.elementHandle(),
+          await field.locator.elementHandle()
         )
       ).jsonValue()) as string;
       savedAnswersState.setSavedAnswer(
         { label: field.label, value },
-        INPUT_TYPES.TEXT,
+        INPUT_TYPES.TEXT
       );
     } catch {
-      console.error("Cannot save Field", field);
+      console.error('Cannot save Field', field);
     }
   }
 };
 
 // Bind button onclick
 export const bindSaveToButton = async (
-  functionText: string = "saveOnContinue",
+  functionText: string = 'saveOnContinue',
   page: Page,
   button: Locator,
   missedFields: IGeneralFillResponse,
-  dropdownComponent: IDropdownComponent,
+  dropdownComponent: IDropdownComponent
 ) => {
   await page.exposeFunction(functionText, async () => {
     await waitForFilled(page, missedFields, dropdownComponent);
   });
 
   await button.evaluate((el, functionText) => {
-    let isDataSaved = false; // Flag to prevent recursion
-
     el?.addEventListener(
-      "click",
+      'click',
       async (event) => {
         // 1. Kill the current event path
         event.preventDefault();
@@ -196,13 +194,12 @@ export const bindSaveToButton = async (
         }
 
         // 3. Manually re-trigger the click to let "super" events fire
-        isDataSaved = true;
         (el as HTMLButtonElement).click();
       },
       {
         once: true,
         capture: true,
-      },
+      }
     );
   }, functionText);
 };

@@ -1,28 +1,28 @@
-import { Page } from "@playwright/test";
-import { selectors } from "./selectors";
-import { FORM_FIELDS, TIMEOUTS } from "../../../config";
-import { generalFill } from "../general";
-import { basicButtonClick } from "../../helpers";
-import { autofillButton } from "../../components";
-import { WORKDAY_PAGES } from "./enums";
-import { dropdownComponent, radioComponent } from "./components";
-import { bindSaveToButton } from "../helpers";
-import { IGeneralFillResponse } from "../general/interfaces";
+import { Page } from '@playwright/test';
+import { selectors } from './selectors';
+import { TIMEOUTS } from '../../../config';
+import { generalFill } from '../general';
+import { basicButtonClick } from '../../helpers';
+import { autofillButton } from '../../components';
+import { WORKDAY_PAGES } from './enums';
+import { dropdownComponent, radioComponent } from './components';
+import { bindSaveToButton } from '../helpers';
+import { IGeneralFillResponse } from '../general/interfaces';
+import { gmail_v1 } from 'googleapis';
 
 export const workdayFlow = async (
   page: Page,
-  emailPage: Page,
-  chatPage: Page,
+  getEmail: () => Promise<gmail_v1.Schema$Message>
 ) => {
   try {
-    await page.waitForLoadState("networkidle", TIMEOUTS.PAGE_START_SHORT);
+    await page.waitForLoadState('networkidle', TIMEOUTS.PAGE_START_SHORT);
   } catch {}
   // apply page
   try {
     await basicButtonClick(page);
-    await basicButtonClick(page, "apply");
+    await basicButtonClick(page, 'apply');
   } catch (err) {
-    console.warn("workdayFlow: apply page failed", err);
+    console.warn('workdayFlow: apply page failed', err);
   }
 
   await autofillButton(page, false);
@@ -30,14 +30,14 @@ export const workdayFlow = async (
   try {
     await selectors(page).autoFillWithResumeButton.click(TIMEOUTS.PAGE_START);
   } catch (err) {
-    console.warn("workdayFlow: apply page failed", err);
+    console.warn('workdayFlow: apply page failed', err);
   }
 
   let isSignedUp = false;
-  let isLoggedIn = false;
+  const isLoggedIn = false;
   while (page) {
     try {
-      await page.waitForLoadState("networkidle", TIMEOUTS.PAGE_START_SHORT);
+      await page.waitForLoadState('networkidle', TIMEOUTS.PAGE_START_SHORT);
     } catch {}
     const pageName = await (await selectors(page).getInitialPage).jsonValue();
 
@@ -47,13 +47,13 @@ export const workdayFlow = async (
         await generalFill(
           page,
           { resume: true },
-          { dropdownComponent, radioComponent },
+          { dropdownComponent, radioComponent }
         );
         await page.waitForTimeout(200);
         await selectors(page).loginCreateAccountButton.click(TIMEOUTS.CLICK);
         isSignedUp = true;
       } catch (err) {
-        console.warn("workdayFlow: signup page failed", err);
+        console.warn('workdayFlow: signup page failed', err);
       }
     }
 
@@ -64,7 +64,7 @@ export const workdayFlow = async (
         await selectors(page).resumeUploaded;
         await selectors(page).continueButton.click(TIMEOUTS.CLICK);
       } catch (err) {
-        console.warn("workdayFlow: resume page failed", err);
+        console.warn('workdayFlow: resume page failed', err);
       } finally {
         break;
       }
@@ -81,13 +81,13 @@ export const workdayFlow = async (
       await selectors(page).referralSelect1.click(TIMEOUTS.PAGE_START_SHORT);
       await selectors(page).referralSelect2.click(TIMEOUTS.PAGE_START_SHORT);
     } catch {
-      console.log("Referral input not found");
+      console.log('Referral input not found');
     }
 
     const personalQuestionsMissed: IGeneralFillResponse = await generalFill(
       page,
       { resume: true },
-      { dropdownComponent, radioComponent },
+      { dropdownComponent, radioComponent }
     );
 
     // await bindSaveToButton(
@@ -98,7 +98,7 @@ export const workdayFlow = async (
     //   dropdownComponent,
     // );
   } catch (err) {
-    console.warn("workdayFlow: personal details page failed", err);
+    console.warn('workdayFlow: personal details page failed', err);
   }
 
   // page 4 - experience details (education + skills)
@@ -128,7 +128,7 @@ export const workdayFlow = async (
     const experienceQuestionsMissed: IGeneralFillResponse = await generalFill(
       page,
       { resume: true },
-      { dropdownComponent, radioComponent },
+      { dropdownComponent, radioComponent }
     );
 
     // await bindSaveToButton(
@@ -139,7 +139,7 @@ export const workdayFlow = async (
     //   dropdownComponent,
     // );
   } catch (err) {
-    console.warn("workdayFlow: experience/education/skills page failed", err);
+    console.warn('workdayFlow: experience/education/skills page failed', err);
   }
 
   // page 5 - application questions
@@ -150,18 +150,18 @@ export const workdayFlow = async (
     const extraQuestionsMissed: IGeneralFillResponse = await generalFill(
       page,
       { resume: true },
-      { dropdownComponent, radioComponent },
+      { dropdownComponent, radioComponent }
     );
 
     await bindSaveToButton(
-      "applicationSave",
+      'applicationSave',
       page,
       selectors(page).continueButton.last(),
       extraQuestionsMissed,
-      dropdownComponent,
+      dropdownComponent
     );
   } catch (err) {
-    console.warn("workdayFlow: application questions failed", err);
+    console.warn('workdayFlow: application questions failed', err);
   }
 
   // page 6 - disclosure questions
@@ -172,18 +172,18 @@ export const workdayFlow = async (
     const disclosureQuestionsMissed: IGeneralFillResponse = await generalFill(
       page,
       { resume: true },
-      { dropdownComponent, radioComponent },
+      { dropdownComponent, radioComponent }
     );
 
     await bindSaveToButton(
-      "disclosureSave",
+      'disclosureSave',
       page,
       selectors(page).continueButton.last(),
       disclosureQuestionsMissed,
-      dropdownComponent,
+      dropdownComponent
     );
   } catch (err) {
-    console.warn("workdayFlow:disclosure page failed", err);
+    console.warn('workdayFlow:disclosure page failed', err);
   }
 
   // page 7 - identity questions
@@ -194,18 +194,18 @@ export const workdayFlow = async (
     const identityQuestionsMissed: IGeneralFillResponse = await generalFill(
       page,
       { resume: true },
-      { dropdownComponent, radioComponent },
+      { dropdownComponent, radioComponent }
     );
 
     await bindSaveToButton(
-      "identitySave",
+      'identitySave',
       page,
       selectors(page).continueButton.last(),
       identityQuestionsMissed,
-      dropdownComponent,
+      dropdownComponent
     );
   } catch (err) {
-    console.warn("workdayFlow: identity page failed", err);
+    console.warn('workdayFlow: identity page failed', err);
   }
   // await selectors(page).experiencePage;
   // await selectors(page).addEducationButton.click();

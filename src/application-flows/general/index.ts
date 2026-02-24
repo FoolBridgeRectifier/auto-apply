@@ -1,17 +1,18 @@
-import { Locator, Page } from "@playwright/test";
-import { filterAlNums, getRequiredInputs } from "./helpers";
+import { Page } from '@playwright/test';
+import { filterAlNums, getRequiredInputs } from './helpers';
 import {
   DROPDOWN_MAPPER,
   FORM_NAME_CHECK,
   RADIO_CHECKS,
   TEXT_MAPPER,
-} from "./mappers";
-import { INPUT_TYPES } from "../../enums";
-import { FORM_FIELDS, TIMEOUTS } from "../../../config";
-import { dropdownComponent, radioComponent } from "./components";
-import { IDropdownComponent, IRadioComponent } from "../interfaces";
-import { syncSavedAnswers } from "../helpers";
-import { IGeneralFillResponse } from "./interfaces";
+} from './mappers';
+import { INPUT_TYPES } from '../../enums';
+import { FORM_FIELDS, TIMEOUTS } from '../../../config';
+import { dropdownComponent, radioComponent } from './components';
+import { IDropdownComponent, IRadioComponent } from '../interfaces';
+import { syncSavedAnswers } from '../helpers';
+import { IGeneralFillResponse } from './interfaces';
+import { openChatGpt } from '../../page-loaders';
 
 const savedAnswersState = syncSavedAnswers();
 
@@ -28,7 +29,7 @@ export async function generalFill(
   components: {
     dropdownComponent?: IDropdownComponent;
     radioComponent?: IRadioComponent;
-  } = { dropdownComponent, radioComponent },
+  } = { dropdownComponent, radioComponent }
 ): Promise<IGeneralFillResponse> {
   const {
     [INPUT_TYPES.TEXT]: textFields,
@@ -47,59 +48,65 @@ export async function generalFill(
     try {
       if (resumeField.linkLocator && !skips.resumeFileChooser) {
         const [fileChooser] = await Promise.all([
-          page.waitForEvent("filechooser", TIMEOUTS.PAGE_START), // Wait for the new page to open
+          page.waitForEvent('filechooser', TIMEOUTS.CLICK), // Wait for the new page to open
           resumeField.linkLocator.click(TIMEOUTS.CLICK), // Click the apply button
         ]);
         try {
           await fileChooser.setFiles(
             FORM_FIELDS.PERSONAL_DETAILS.RESUME,
-            TIMEOUTS.CLICK,
+            TIMEOUTS.CLICK
           );
         } catch {}
       }
       if (resumeField.locator && !skips.resumeFileSetter) {
         await resumeField.locator.setInputFiles(
           FORM_FIELDS.PERSONAL_DETAILS.RESUME,
-          TIMEOUTS.CLICK,
+          TIMEOUTS.CLICK
         );
       }
-      await page.waitForLoadState("networkidle", TIMEOUTS.PAGE_START);
+      await page.waitForLoadState('networkidle', TIMEOUTS.PAGE_START);
     } catch (e) {
-      console.error("SET_RESUME_ERROR");
+      console.error('SET_RESUME_ERROR');
       resumeError = e;
     }
   }
   // text fields
   if (!skips.text) {
+    // eslint-disable-next-line no-useless-assignment
     let nameUsed = false;
     for (const field of textFields) {
       nameUsed = FORM_NAME_CHECK.test(field.label);
 
-      const formValue =
-        savedAnswersState.getSavedAnswer(field.label, INPUT_TYPES.TEXT) ??
+      let formValue =
+        savedAnswersState.getSavedAnswer(field.label, INPUT_TYPES.TEXT)
+          ?.value ||
         TEXT_MAPPER.find(({ matcher }) =>
-          matcher.test(filterAlNums(field.label)),
-        );
+          matcher.test(filterAlNums(field.label))
+        )?.value;
 
       try {
+        if (!formValue) {
+          formValue = await openChatGpt(INPUT_TYPES.TEXT, field.label);
+          missedRequiredTexts.push(field);
+        }
         if (formValue) {
           await field.locator.clear(TIMEOUTS.CLICK);
-          await field.locator.fill(formValue.value, TIMEOUTS.CLICK);
+          await field.locator.fill(formValue, TIMEOUTS.CLICK);
         } else {
           missedRequiredTexts.push(field);
         }
 
         // when only full name
-        if (!nameUsed && field.label.includes("name")) {
+        if (!nameUsed && field.label.includes('name')) {
           await field.locator.clear(TIMEOUTS.CLICK);
           await field.locator.fill(
             `${FORM_FIELDS.PERSONAL_DETAILS.FIRST_NAME} ${FORM_FIELDS.PERSONAL_DETAILS.LAST_NAME}`,
-            TIMEOUTS.CLICK,
+            TIMEOUTS.CLICK
           );
           nameUsed = true;
         }
       } catch {
-        console.error("TEXT_NOT_FILLED", field.label);
+        console.error('TEXT_NOT_FILLED', field.label);
         missedRequiredTexts.push(field);
       }
     }
@@ -108,21 +115,32 @@ export async function generalFill(
   // dropdown fields
   if (!skips.dropdown) {
     for (const field of dropdownFields) {
-      const formValue =
-        DROPDOWN_MAPPER.find(({ matcher }) =>
-          matcher.test(filterAlNums(field.label)),
-        ) ??
-        savedAnswersState.getSavedAnswer(field.label, INPUT_TYPES.DROPDOWN);
-
       let isFilled = false;
       const options = await (
         components.dropdownComponent as IDropdownComponent
       ).allOptionsLocator(field.locator, page);
 
+      let formValue: RegExp | string | undefined =
+        savedAnswersState.getSavedAnswer(field.label, INPUT_TYPES.DROPDOWN)
+          ?.optionMatcher ||
+        DROPDOWN_MAPPER.find(({ matcher }) =>
+          matcher.test(filterAlNums(field.label))
+        )?.optionMatcher;
       try {
+        if (!formValue) {
+          formValue = await openChatGpt(
+            INPUT_TYPES.DROPDOWN,
+            field.label,
+            options.map(({ label }) => label).join(', ')
+          );
+          missedRequiredDropdown.push({ ...field, options });
+        }
         if (formValue) {
           const chosenOption = options.find(({ label }) =>
-            formValue?.optionMatcher?.test(filterAlNums(label)),
+            (typeof formValue === 'string'
+              ? new RegExp(formValue)
+              : formValue
+            )?.test(filterAlNums(label))
           );
 
           if (chosenOption) {
@@ -135,11 +153,11 @@ export async function generalFill(
         }
 
         if (!isFilled) {
-          console.error("DROPDOWN_NOT_FILLED", field.label);
+          console.error('DROPDOWN_NOT_FILLED', field.label);
           missedRequiredDropdown.push({ ...field, options });
         }
       } catch {
-        console.error("DROPDOWN_NOT_FILLED_ERROR", field.label);
+        console.error('DROPDOWN_NOT_FILLED_ERROR', field.label);
         missedRequiredDropdown.push({ ...field, options });
       }
     }
@@ -155,10 +173,10 @@ export async function generalFill(
             const formValue =
               savedAnswersState.getSavedAnswer(
                 field.label,
-                INPUT_TYPES.RADIO,
+                INPUT_TYPES.RADIO
               ) ??
               RADIO_CHECKS.some(({ matcher }) =>
-                matcher.test(filterAlNums(field.label)),
+                matcher.test(filterAlNums(field.label))
               );
 
             let isFilled = false;
@@ -169,7 +187,7 @@ export async function generalFill(
             }
 
             if (!isFilled) {
-              console.error("RADIO_NOT_FILLED_SEPARATE", field);
+              console.error('RADIO_NOT_FILLED_SEPARATE', field);
               missedRequiredRadios.push(field);
             }
           }
@@ -179,16 +197,16 @@ export async function generalFill(
           const formValue =
             savedAnswersState.getSavedAnswer(
               radioGroup.radioLabel,
-              INPUT_TYPES.DROPDOWN,
+              INPUT_TYPES.DROPDOWN
             ) ??
             DROPDOWN_MAPPER.find(({ matcher }) =>
-              matcher.test(filterAlNums(radioGroup.radioLabel)),
+              matcher.test(filterAlNums(radioGroup.radioLabel))
             );
 
           if (formValue) {
             const options = radioGroup.options;
             const chosenOption = options.find(({ label }) =>
-              formValue?.optionMatcher?.test(filterAlNums(label)),
+              formValue?.optionMatcher?.test(filterAlNums(label))
             );
 
             if (chosenOption) {
@@ -199,13 +217,13 @@ export async function generalFill(
             }
           }
 
-          if (!isFilled && radioGroup.radioLabel.includes("*")) {
-            console.error("RADIO_NOT_FILLED_GROUPED", radioGroup.radioLabel);
+          if (!isFilled && radioGroup.radioLabel.includes('*')) {
+            console.error('RADIO_NOT_FILLED_GROUPED', radioGroup.radioLabel);
             missedRequiredDropdown.push(radioGroup);
           }
         }
       } catch (e) {
-        console.error("RADIO_NOT_FILLED_ERROR", radioGroup.radioLabel, e);
+        console.error('RADIO_NOT_FILLED_ERROR', radioGroup.radioLabel, e);
       }
     }
   }

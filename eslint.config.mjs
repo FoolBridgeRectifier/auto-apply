@@ -10,6 +10,7 @@ export default tseslint.config(
       // This is what you wanted: show error for unused variables
       "@typescript-eslint/no-unused-vars": "error",
       "no-unused-vars": "off", // Turn off base rule to avoid duplication
+      'no-empty': 'off',
     },
   },
   prettier // Must be last to disable formatting conflicts
