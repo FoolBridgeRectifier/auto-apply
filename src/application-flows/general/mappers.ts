@@ -1,7 +1,7 @@
-import { FORM_FIELDS } from "../../../config";
-import { mockEmail } from "../../mocks";
+import { FORM_FIELDS } from '../../../config';
+import { mockEmail } from '../../mocks';
 
-export const regexMatchers = {
+const regexMatchers = {
   firstName: /\bfirst\s*name\b/i,
   lastName: /\blast\s*name\b/i,
   fullName: /\bfull\s*name\b/i,
@@ -45,7 +45,7 @@ export const TEXT_MAPPER = [
     matcher: regexMatchers.fullName,
     value: `${FORM_FIELDS.PERSONAL_DETAILS.FIRST_NAME} ${FORM_FIELDS.PERSONAL_DETAILS.LAST_NAME}`,
   },
-  { matcher: regexMatchers.gender, value: "male" },
+  { matcher: regexMatchers.gender, value: 'male' },
   {
     matcher: regexMatchers.phone,
     value: FORM_FIELDS.PERSONAL_DETAILS.PHONE_NUMBER,
@@ -83,15 +83,15 @@ export const TEXT_MAPPER = [
     matcher: regexMatchers.expectedSalary,
     value: FORM_FIELDS.APPLICATION_FIELDS.EXPECTED_SALARY,
   },
-  { matcher: regexMatchers.hear, value: "linkedin" },
-  { matcher: regexMatchers.sponsorship, value: "yes" },
+  { matcher: regexMatchers.hear, value: 'linkedin' },
+  { matcher: regexMatchers.sponsorship, value: 'yes' },
 ];
 
 export const DROPDOWN_MAPPER = [
   { matcher: regexMatchers.gender, optionMatcher: /\bmale\b/i },
   {
     matcher: regexMatchers.city,
-    optionMatcher: new RegExp(FORM_FIELDS.PERSONAL_DETAILS.ADDRESS.CITY, "i"),
+    optionMatcher: new RegExp(FORM_FIELDS.PERSONAL_DETAILS.ADDRESS.CITY, 'i'),
   },
   // {
   //   matcher: regexMatchers.state,
@@ -101,7 +101,7 @@ export const DROPDOWN_MAPPER = [
     matcher: regexMatchers.country,
     optionMatcher: new RegExp(
       `\b${FORM_FIELDS.PERSONAL_DETAILS.ADDRESS.COUNTRY}\b|United States of America`,
-      "i",
+      'i'
     ),
   },
   { matcher: regexMatchers.hear, optionMatcher: /linkedin/i },

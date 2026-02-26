@@ -1,12 +1,12 @@
-import path from "path";
-import fs from "fs";
+import path from 'path';
+import fs from 'fs';
 
 const defaultData = {
   total: 0,
   days: [],
 };
 
-const dataPath = path.join(__dirname, "../../data/applications.json");
+const dataPath = path.join(__dirname, '../../data/applications.json');
 
 interface DayData {
   date: string;
@@ -22,13 +22,13 @@ export const syncFile = () => {
   let data: ApplicationData;
 
   try {
-    const fileContent = fs.readFileSync(dataPath, "utf-8");
+    const fileContent = fs.readFileSync(dataPath, 'utf-8');
     data = JSON.parse(fileContent);
-  } catch (error) {
+  } catch {
     data = { ...defaultData };
   }
 
-  const dateToday = new Date().toISOString().split("T")[0];
+  const dateToday = new Date().toISOString().split('T')[0];
   const todayFromFile = data.days.find((day) => day.date === dateToday);
 
   const todayEntry = todayFromFile

@@ -1,9 +1,8 @@
-import { Page } from "@playwright/test";
-import { FORM_FIELDS, TIMEOUTS } from "../../../config";
+import { Page } from '@playwright/test';
 
 export const selectors = (page: Page) => ({
   get securityCodeInput() {
-    return page.getByLabel("Security Code ");
+    return page.getByLabel('Security Code ');
   },
   // input button: <input type="button" value="Submit Application" id="submit_app" class="button">
   get submitApplicationButton() {
@@ -14,7 +13,7 @@ export const selectors = (page: Page) => ({
     try {
       const text = await page
         .locator(
-          "text=Copy and paste this code into the security code field on your application",
+          'text=Copy and paste this code into the security code field on your application'
         )
         .first()
         .innerText();

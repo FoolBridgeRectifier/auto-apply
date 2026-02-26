@@ -8,7 +8,7 @@ import { gmail_v1 } from 'googleapis';
 import { dropdownComponent } from './components';
 import { radioComponent } from '../general/components';
 
-export const greenhouseFlow = async (
+export const ashbyFlow = async (
   page: Page,
   getEmail: () => Promise<gmail_v1.Schema$Message>
 ) => {

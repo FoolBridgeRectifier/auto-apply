@@ -1,6 +1,6 @@
 import path from 'path';
 
-export const isMocked = 'greenhouse'; // "workday";
+export const isMocked = ''; // "workday";
 
 export const TIMEOUTS = {
   CLICK: { timeout: 300 },

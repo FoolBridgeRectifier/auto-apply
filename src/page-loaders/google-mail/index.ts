@@ -1,26 +1,53 @@
+import fs from 'fs';
 import path from 'path';
 import { authenticate } from '@google-cloud/local-auth';
 import { gmail_v1, google } from 'googleapis';
+import { OAuth2Client } from 'google-auth-library';
 
 // The scope for reading Gmail labels.
 const SCOPES = ['https://www.googleapis.com/auth/gmail.readonly'];
 // The path to the credentials file.
 const CREDENTIALS_PATH = path.join(
   __dirname,
-  '../../../config/credentials.json'
+  '../../../auth/gmail_credentials.json'
 );
 
+const TOKEN_PATH = path.join(__dirname, '../../../auth/gmail_token.json');
+
 const authenticateGmail = async () => {
-  const auth = await authenticate({
-    scopes: SCOPES,
-    keyfilePath: CREDENTIALS_PATH,
+  let auth: OAuth2Client;
+
+  if (fs.existsSync(TOKEN_PATH)) {
+    const tokens = JSON.parse(fs.readFileSync(TOKEN_PATH, 'utf-8'));
+
+    auth = new OAuth2Client(tokens.client_id, tokens.client_secret);
+
+    auth.setCredentials({
+      refresh_token: tokens.refresh_token,
+    });
+  } else {
+    const client = await authenticate({
+      scopes: SCOPES,
+      keyfilePath: CREDENTIALS_PATH,
+    });
+
+    auth = client as OAuth2Client;
+
+    fs.writeFileSync(
+      TOKEN_PATH,
+      JSON.stringify({
+        client_id: auth._clientId,
+        client_secret: auth._clientSecret,
+        refresh_token: auth.credentials.refresh_token,
+      })
+    );
+  }
+
+  return google.gmail({
+    version: 'v1',
+    auth, // ✅ OAuth2Client ONLY
   });
-
-  const gmail = google.gmail({ version: 'v1', auth });
-
-  return gmail;
 };
-
 /**
  * Returns the latest email as soon as it arrives.
  */

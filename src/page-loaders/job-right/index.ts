@@ -1,13 +1,10 @@
-import { Page } from "@playwright/test";
-import { selectors } from "./selectors";
-import { jobRightApplicationMock } from "../../mocks";
-import { TIMEOUTS } from "../../../config";
-
-const JOBRIGHT_PAGE_RETRY = 2;
+import { Page } from '@playwright/test';
+import { selectors } from './selectors';
+import { jobRightApplicationMock } from '../../mocks';
 
 export const openJobRight = async (page: Page) => {
   // Wait for the new Google Sign-In window
-  await page.goto("https://jobright.ai/jobs/recommend");
+  await page.goto('https://jobright.ai/jobs/recommend');
   // for (let i = 0; i < JOBRIGHT_PAGE_RETRY; i++) {
   //   await page.goto("https://jobright.ai/");
   //   try {

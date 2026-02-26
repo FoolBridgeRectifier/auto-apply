@@ -1,5 +1,5 @@
 import { chromium, test } from '@playwright/test';
-import { openChatGpt, openEmail, openJobRight } from './page-loaders';
+import { openEmail, openJobRight } from './page-loaders';
 import { jobRightAppliedButton } from './page-loaders/job-right/selectors';
 import { incrementApplications } from './components';
 import { chromium as playwrightExtra } from 'playwright-extra';
@@ -64,7 +64,7 @@ test.describe('debug', () => {
 
   runTestFunctions.test(
     'test',
-    async ({ page: debugPage, context: debugContext }) => {
+    async ({ page: _debugPage, context: debugContext }) => {
       const isDebugMode =
         process.env.PWDEBUG === '1' || process.env.PWDEBUG === 'console';
       if (isDebugMode) {

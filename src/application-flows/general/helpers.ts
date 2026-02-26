@@ -1,10 +1,5 @@
 import { Locator, Page } from '@playwright/test';
-import {
-  dateInputTypes,
-  radioInputTypes,
-  resumeInputTypes,
-  textInputTypes,
-} from './constants';
+import { resumeInputTypes } from './constants';
 import { INPUT_TYPES } from '../../enums';
 import { TIMEOUTS } from '../../../config';
 import { dropdownComponent } from './components';
@@ -32,14 +27,14 @@ const getLabel = async (page: Page, locator: Locator, isRadio?: boolean) => {
       adjacentLabelText =
         (await adjacentLabelLocator.first().textContent()) ?? '';
     }
-  } catch (e) {}
+  } catch {}
 
   let parentLabelText = '';
   try {
     if (await parentLabelLocator.isVisible(TIMEOUTS.FIND)) {
       parentLabelText = (await parentLabelLocator.first().textContent()) ?? '';
     }
-  } catch (e) {}
+  } catch {}
 
   let fieldsetTitleText = '';
   try {
@@ -47,7 +42,7 @@ const getLabel = async (page: Page, locator: Locator, isRadio?: boolean) => {
       fieldsetTitleText =
         (await fieldsetTitleLocator.first().textContent()) ?? '';
     }
-  } catch (e) {}
+  } catch {}
 
   let adjacentLabelAfter = '';
   try {
@@ -55,7 +50,7 @@ const getLabel = async (page: Page, locator: Locator, isRadio?: boolean) => {
       adjacentLabelAfter =
         (await getAfterContent(adjacentLabelLocator.first())) ?? '';
     }
-  } catch (e) {}
+  } catch {}
 
   let parentLabelAfter = '';
   try {
@@ -63,7 +58,7 @@ const getLabel = async (page: Page, locator: Locator, isRadio?: boolean) => {
       parentLabelAfter =
         (await getAfterContent(parentLabelLocator.first())) ?? '';
     }
-  } catch (e) {}
+  } catch {}
 
   let fieldsetTitleAfter = '';
   try {
@@ -71,7 +66,7 @@ const getLabel = async (page: Page, locator: Locator, isRadio?: boolean) => {
       fieldsetTitleAfter =
         (await getAfterContent(fieldsetTitleLocator.first())) ?? '';
     }
-  } catch (e) {}
+  } catch {}
 
   const fieldsetText = fieldsetTitleText + fieldsetTitleAfter;
   const labelText = (
@@ -99,25 +94,10 @@ export const getRequiredInputs = async (
   let requiredTextLocators = [];
   let textInputLocators: Locator[] = [];
   try {
-    if (
-      await page
-        .locator(
-          `:is(input${[...textInputTypes, ...dateInputTypes].map(
-            (type) => `:is([type="${type}"])`
-          )}, textarea)`
-        )
-        .first()
-        .isVisible(TIMEOUTS.FIND)
-    ) {
-      textInputLocators = await page
-        .locator(
-          `:is(input${[...textInputTypes, ...dateInputTypes].map(
-            (type) => `:is([type="${type}"])`
-          )}, textarea)`
-        )
-        .all();
+    if (await page.getByRole('textbox').first().isVisible(TIMEOUTS.FIND)) {
+      textInputLocators = await page.getByRole('textbox').all();
     }
-  } catch (e) {
+  } catch {
     console.error('NO_TEXT_INPUTS');
   }
 
@@ -166,19 +146,15 @@ export const getRequiredInputs = async (
   let radioLocators: Locator[] = [];
   try {
     if (
-      await page
-        .locator(
-          `:is(input${radioInputTypes.map((type) => `:is([type="${type}"])`)})`
-        )
-        .isVisible(TIMEOUTS.FIND)
+      (await page.getByRole('radio').first().isVisible(TIMEOUTS.FIND)) ||
+      (await page.getByRole('checkbox').first().isVisible(TIMEOUTS.FIND))
     ) {
-      radioLocators = await page
-        .locator(
-          `:is(input${radioInputTypes.map((type) => `:is([type="${type}"])`)})`
-        )
-        .all();
+      radioLocators = [
+        ...(await page.getByRole('radio').all()),
+        ...(await page.getByRole('checkbox').all()),
+      ];
     }
-  } catch (e) {
+  } catch {
     console.error('NO_RADIO_INPUTS');
   }
 
@@ -210,7 +186,7 @@ export const getRequiredInputs = async (
   }
 
   // for resume
-  const resumeLinkLocator = await page
+  const resumeLinkLocator = page
     .locator('button, a')
     .filter({
       hasText: new RegExp(resumeInputTypes.join('|'), 'i'),

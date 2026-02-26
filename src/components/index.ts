@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { generalFill } from '../application-flows';
+import { generalFill } from '../application-flows/general';
 import { TIMEOUTS } from '../../config';
 import {
   clickFillButtonStyle,
@@ -25,7 +25,7 @@ declare global {
 
 // module-level autoplay state and accessor/mutator
 let autoplay = false;
-export const syncedData = syncFile();
+const syncedData = syncFile();
 let applicationsTotal = syncedData.applicationsTotal;
 let applicationsToday = syncedData.applicationsToday;
 
@@ -33,10 +33,6 @@ export const incrementApplications = () => {
   syncedData.incrementApplications();
   applicationsTotal += 1;
   applicationsToday += 1;
-};
-
-export const setAutoplay = (updatedAutoplay: boolean) => {
-  autoplay = updatedAutoplay;
 };
 
 const exposeAutoplayCallbacks = async (page: Page) => {
@@ -205,11 +201,11 @@ const setupNavigationHandlers = async (page: Page) => {
   page.context().on('page', async (popup) => attachElements(popup));
 
   await page.evaluate(() => {
-    const patch = (objName: 'pushState' | 'replaceState', orig: Function) => {
+    const patch = (objName: 'pushState' | 'replaceState', orig: (...args: unknown[]) => unknown) => {
       const original = orig.bind(history);
-      history[objName] = async function (...args: any[]) {
+      history[objName] = async function (...args: unknown[]) {
         const res = original(...args);
-        window.attachElements && (await window.attachElements());
+        if (window.attachElements) await window.attachElements();
         return res;
       };
     };
@@ -217,7 +213,7 @@ const setupNavigationHandlers = async (page: Page) => {
     patch('pushState', history.pushState);
     patch('replaceState', history.replaceState);
     window.addEventListener('popstate', async () => {
-      window.attachElements && (await window.attachElements());
+      if (window.attachElements) await window.attachElements();
     });
 
     const observer = new MutationObserver(async () => {
@@ -225,7 +221,7 @@ const setupNavigationHandlers = async (page: Page) => {
         !document.getElementById('__autofill_btn') ||
         !document.getElementById('__autofill_toggle')
       ) {
-        window.attachElements && (await window.attachElements());
+        if (window.attachElements) await window.attachElements();
       }
     });
     observer.observe(document.body, { childList: true, subtree: true });

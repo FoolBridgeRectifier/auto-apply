@@ -89,6 +89,26 @@
       {
         "label": "please let us know if you are located in any of these countries: chile, perú, méxico, colombia, uruguay, brazil or argentina *\n    \n    \n    \n\n\n   --                             --\nyes\nno\n\n\n",
         "value": "No"
+      },
+      {
+        "label": "are you legally authorized to work in the united states?*",
+        "value": "Yes"
+      },
+      {
+        "label": "will you now or in the future require sponsorship or other employer support to secure or maintain authorization to work in the united states? [\"other employer support\" includes but is not limited to: 1) letters of support for visa applications of any type, including o or tn visas; and 2) completion of ice form i-983.]*",
+        "value": "No"
+      },
+      {
+        "label": "please select a veteran status*",
+        "value": "I AM NOT A VETERAN"
+      },
+      {
+        "label": "please select a gender*",
+        "value": "Male"
+      },
+      {
+        "label": "please select a race ethnicity*",
+        "value": "Asian (Not Hispanic or Latino) (United States of America)"
       }
     ],
     "exclude": []
@@ -104,8 +124,6 @@
         "value": ""
       }
     ],
-    "exclude": [
-      "i currently work here"
-    ]
+    "exclude": ["i currently work here"]
   }
 }

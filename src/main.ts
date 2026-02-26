@@ -2,10 +2,6 @@ import { Page } from '@playwright/test';
 import { routes } from './routes';
 import { basicButtonClick } from './helpers';
 import { autofillButton } from './components';
-import { generalFill } from './application-flows';
-import { IGeneralFillResponse } from './application-flows/general/interfaces';
-import { bindSaveToButton } from './application-flows/helpers';
-import { dropdownComponent } from './application-flows/general/components';
 import { gmail_v1 } from 'googleapis';
 
 export const fillApplication = async (
@@ -27,9 +23,9 @@ export const fillApplication = async (
         await applicationFlow.flow(applicationPage, getEmail);
       } catch {}
     } else {
-      // await basicButtonClick(applicationPage);
-      // await basicButtonClick(applicationPage, '^(?!.*linkedin).*\\bapply\\b');
-      // await autofillButton(applicationPage);
+      await basicButtonClick(applicationPage);
+      await basicButtonClick(applicationPage, '^(?!.*linkedin).*\\bapply\\b');
+      await autofillButton(applicationPage);
       // try {
       //   const missedQuestions: IGeneralFillResponse = await generalFill(
       //     applicationPage,

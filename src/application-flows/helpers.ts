@@ -86,7 +86,7 @@ const savedAnswersState = {
 export const syncSavedAnswers = () => savedAnswersState;
 
 // Check all inputs for filled values
-export const waitForFilled = async (
+const waitForFilled = async (
   page: Page,
   missedFields: IGeneralFillResponse,
   dropdownComponent: IDropdownComponent = defaultDropdownComponent

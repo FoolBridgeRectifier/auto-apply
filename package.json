@@ -13,12 +13,16 @@
     "playwright-extra": "^4.3.6",
     "prettier": "^3.8.1",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "ts-unused-exports": "^11.0.1",
+    "typescript": "^5.9.3",
     "typescript-eslint": "^8.56.0"
   },
   "scripts": {
     "postinstall": "npx playwright install",
     "start": "playwright test",
-    "launch-browser": "start chrome --remote-debugging-port=9222 --user-data-dir=C:\\temp\\chrome_dev_profile"
+    "launch-browser": "start chrome --remote-debugging-port=9222 --user-data-dir=C:\\temp\\chrome_dev_profile",
+    "lint": "eslint .",
+    "lint:exports": "ts-unused-exports tsconfig.json"
   },
   "dependencies": {
     "@google-cloud/local-auth": "^2.1.0",

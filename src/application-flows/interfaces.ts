@@ -1,11 +1,11 @@
-import { Locator, Page } from "@playwright/test";
-import { INPUT_TYPES } from "../enums";
+import { Locator, Page } from '@playwright/test';
+import { INPUT_TYPES } from '../enums';
 
 export interface IDropdownComponent {
   allLocator: (page: Page) => Promise<Locator[]>;
   allOptionsLocator: (
     locator: Locator,
-    page: Page,
+    page: Page
   ) => Promise<
     {
       locator: Locator;
@@ -21,14 +21,14 @@ export interface IDropdownComponent {
     selectedOption?: {
       label?: string;
       locator?: Locator;
-    },
+    }
   ) => Promise<void>;
   getOptionSelected: (
     page: Page,
     input: {
       label?: string;
       locator: Locator;
-    },
+    }
   ) => Promise<string>;
 }
 
@@ -38,11 +38,11 @@ export interface IRadioComponent {
     selectedOption: {
       label: string;
       locator: Locator;
-    },
+    }
   ) => Promise<boolean>;
 }
 
-export type TSavedAnswerArray = {
+type TSavedAnswerArray = {
   include: Array<{
     label: string;
     value: string;

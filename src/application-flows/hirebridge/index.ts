@@ -7,7 +7,7 @@ import { gmail_v1 } from 'googleapis';
 
 export const hirebridgeFlow = async (
   page: Page,
-  getEmail: () => Promise<gmail_v1.Schema$Message>
+  _getEmail: () => Promise<gmail_v1.Schema$Message>
 ) => {
   const [popupPage] = await Promise.all([
     page.waitForEvent('popup'),
