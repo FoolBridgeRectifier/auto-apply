@@ -28,11 +28,13 @@ let autoplay = false;
 const syncedData = syncFile();
 let applicationsTotal = syncedData.applicationsTotal;
 let applicationsToday = syncedData.applicationsToday;
+let applicationsTwoDays = syncedData.applicationsTwoDays;
 
 export const incrementApplications = () => {
   syncedData.incrementApplications();
   applicationsTotal += 1;
   applicationsToday += 1;
+  applicationsTwoDays += 1;
 };
 
 const exposeAutoplayCallbacks = async (page: Page) => {
@@ -76,6 +78,7 @@ const injectButtons = async (page: Page) => {
       counterStyle,
       applicationsTotal,
       applicationsToday,
+      applicationsTwoDays,
       autoplay,
     }) => {
       if (!document.getElementById(overlayDivStyle.id)) {
@@ -89,7 +92,11 @@ const injectButtons = async (page: Page) => {
         const todayCounter = document.createElement('div');
         todayCounter.textContent = `today: ${applicationsToday.toString()}`;
 
+        const twoDaysCounter = document.createElement('div');
+        twoDaysCounter.textContent = `2 days: ${applicationsTwoDays.toString()}`;
+
         counter.appendChild(totalCounter);
+        counter.appendChild(twoDaysCounter);
         counter.appendChild(todayCounter);
 
         // overlay container
@@ -144,6 +151,7 @@ const injectButtons = async (page: Page) => {
       counterStyle,
       applicationsTotal,
       applicationsToday,
+      applicationsTwoDays,
       autoplay,
     }
   );

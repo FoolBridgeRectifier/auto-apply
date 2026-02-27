@@ -20,9 +20,9 @@
   "scripts": {
     "postinstall": "npx playwright install",
     "start": "playwright test",
-    "launch-browser": "start chrome --remote-debugging-port=9222 --user-data-dir=C:\\temp\\chrome_dev_profile",
     "lint": "eslint .",
-    "lint:exports": "ts-unused-exports tsconfig.json"
+    "lint:exports": "ts-unused-exports tsconfig.json",
+    "launch-browser": "start chrome --remote-debugging-port=9222 --user-data-dir=C:\\temp\\chrome_dev_profile"
   },
   "dependencies": {
     "@google-cloud/local-auth": "^2.1.0",

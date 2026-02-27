@@ -1,5 +1,5 @@
 export const overlayDivStyle = {
-  id: "__autofill-overlay",
+  id: '__autofill-overlay',
   style: ` 
     position: fixed;
     top: 12px;
@@ -17,10 +17,10 @@ export const overlayDivStyle = {
 };
 
 export const toggleButtonStyle = {
-  id: "__autofill-toggle-button",
+  id: '__autofill-toggle-button',
   textContent: {
-    pause: "⏸",
-    play: "▶",
+    pause: '⏸',
+    play: '▶',
   },
   style: ` 
     margin: 5px;
@@ -35,8 +35,8 @@ export const toggleButtonStyle = {
 };
 
 export const clickFillButtonStyle = {
-  id: "__autofill-click-button",
-  textContent: "Autofill",
+  id: '__autofill-click-button',
+  textContent: 'Autofill',
   style: ` 
     margin: 5px;
     padding: 5px;
@@ -50,13 +50,13 @@ export const clickFillButtonStyle = {
 };
 
 export const counterStyle = {
-  id: "__autofill-counter",
-  style: ` 
+  id: '__autofill-counter',
+  style: `
     position: fixed;
-    height: 57px;
+    height: 82px;
     width: 77px;
     display: grid;
-    grid-template-rows: 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
     gap: 4px;
     place-items: center;
     font-size: 13px;

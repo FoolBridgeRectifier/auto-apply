@@ -29,7 +29,10 @@ export const syncFile = () => {
   }
 
   const dateToday = new Date().toISOString().split('T')[0];
+  const dateYesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+
   const todayFromFile = data.days.find((day) => day.date === dateToday);
+  const yesterdayEntry = data.days.find((day) => day.date === dateYesterday);
 
   const todayEntry = todayFromFile
     ? todayFromFile
@@ -50,6 +53,7 @@ export const syncFile = () => {
   return {
     applicationsTotal: data.total,
     applicationsToday: todayEntry.count,
+    applicationsTwoDays: todayEntry.count + (yesterdayEntry?.count ?? 0),
     incrementApplications,
   };
 };
