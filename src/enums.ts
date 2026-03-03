@@ -3,6 +3,7 @@ export const APPLICATION_FLOWS = {
   HIREBRIDGE: 'hirebridge',
   WORKDAY: 'workday',
   GREENHOUSE: 'greenhouse',
+  ICIMS: 'icims',
   LINKEDIN: 'linkedin',
   LEVER: 'lever',
 } as const;

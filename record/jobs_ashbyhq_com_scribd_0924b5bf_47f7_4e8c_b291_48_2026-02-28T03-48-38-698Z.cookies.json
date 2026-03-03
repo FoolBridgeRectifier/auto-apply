@@ -1,0 +1,22 @@
+[
+  {
+    "name": "_GRECAPTCHA",
+    "value": "09AKhCRwjGmSzZaXFmd8DVf3MMo-wzaaAL-7c4QKlrLDl33_jrPWeVwWYTYb_D5cOm_5fRFb3Bgh2NoIm0oAly0vQ",
+    "domain": "www.recaptcha.net",
+    "path": "/recaptcha",
+    "expires": 1787802534.321813,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "_dd_s",
+    "value": "aid=586137f3-23ba-43e6-9e0a-7a889f4315d4&rum=0&expire=1772251553831",
+    "domain": "jobs.ashbyhq.com",
+    "path": "/",
+    "expires": 1803786653,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Strict"
+  }
+]

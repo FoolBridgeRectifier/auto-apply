@@ -12,6 +12,7 @@ export const fillApplication = async (
     await applicationPage.waitForLoadState('networkidle', { timeout: 2000 });
   } catch {}
 
+  await autofillButton(applicationPage);
   try {
     const url = applicationPage.url();
     const applicationFlow = Object.values(routes).find((route) =>
@@ -25,7 +26,6 @@ export const fillApplication = async (
     } else {
       await basicButtonClick(applicationPage);
       await basicButtonClick(applicationPage, '^(?!.*linkedin).*\\bapply\\b');
-      await autofillButton(applicationPage);
       // try {
       //   const missedQuestions: IGeneralFillResponse = await generalFill(
       //     applicationPage,

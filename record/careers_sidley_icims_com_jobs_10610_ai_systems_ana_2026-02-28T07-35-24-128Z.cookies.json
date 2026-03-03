@@ -1,0 +1,234 @@
+[
+  {
+    "name": "i18next",
+    "value": "en",
+    "domain": "careers-sidley.icims.com",
+    "path": "/jobs/10610/ai-systems-analyst",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "cookie_icims_iframe_content_height",
+    "value": "709",
+    "domain": "careers-sidley.icims.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "Strict"
+  },
+  {
+    "name": "icimsCookiesEnabledCheck",
+    "value": "1",
+    "domain": ".icims.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "Strict"
+  },
+  {
+    "name": "YSC",
+    "value": "upEgln-nQ-k",
+    "domain": ".youtube.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None",
+    "partitionKey": "https://icims.com",
+    "_crHasCrossSiteAncestor": true
+  },
+  {
+    "name": "VISITOR_INFO1_LIVE",
+    "value": "tDBQMq98iuA",
+    "domain": ".youtube.com",
+    "path": "/",
+    "expires": 1787816125.503761,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None",
+    "partitionKey": "https://icims.com",
+    "_crHasCrossSiteAncestor": true
+  },
+  {
+    "name": "VISITOR_PRIVACY_METADATA",
+    "value": "CgJVUxIEGgAgOA%3D%3D",
+    "domain": ".youtube.com",
+    "path": "/",
+    "expires": 1787816125.503789,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None",
+    "partitionKey": "https://icims.com",
+    "_crHasCrossSiteAncestor": true
+  },
+  {
+    "name": "__Secure-YNID",
+    "value": "16.YT=yAEDEleOcbCEP09TDs2ihlGO62pmp0IOqPZerDtCI7F4yRFHTSQYnFFqg0Z1N_Yk5jFi4pYj5ccLjVuN2xUaCwEvkX0f08nO8RWahRPepRWhRZSlUY94jrjOK78fiZA-LhO6ogausINjVcHxTUVKV3I6y0TE9EHDyfYUlBrCiJmnb9OwwgkOCgUUX0lL5fBguMEz-XyCLE-g8z-tQefJ4Z7jVXhDJz_UzR2Djmalx4hsRO0pqSCMOkrQDtOPs-kVRL9VHkgyjEpXQDnqDOQxI_4Sj4Sot_n9oL_L0qY1I0ghVjVdq9CPX9IH5w487vtdHZCHSrIRJPJ0ILN3drZkaA",
+    "domain": ".youtube.com",
+    "path": "/",
+    "expires": 1787816125.66636,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None",
+    "partitionKey": "https://icims.com",
+    "_crHasCrossSiteAncestor": true
+  },
+  {
+    "name": "__Secure-ROLLOUT_TOKEN",
+    "value": "CNCTod_r6NOmRxCOrems1vuSAxjcvvKs1vuSAw%3D%3D",
+    "domain": ".youtube.com",
+    "path": "/",
+    "expires": 1787816125.66648,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None",
+    "partitionKey": "https://icims.com",
+    "_crHasCrossSiteAncestor": true
+  },
+  {
+    "name": "_ga",
+    "value": "GA1.1.1122106567.1772264126",
+    "domain": ".icims.com",
+    "path": "/",
+    "expires": 1806824374.112268,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "AWSALBCORS",
+    "value": "38MPa8enl4QjpHStoaAUxEMQOmnVd2xNZHGO/dYvKxFNC3lim6F0axHnkuH7a+UAph7DCVW+Ot04RXUx5XLz7hEBSnMDrgpLOMQUIMf4gfStP53XRPWEVECyNUnz",
+    "domain": "analytics.click2apply.net",
+    "path": "/",
+    "expires": 1772868926.344446,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "_janalytics_ses.4357",
+    "value": "*",
+    "domain": ".icims.com",
+    "path": "/",
+    "expires": 1772266174,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "icims_JibeSessionId",
+    "value": "0ef3e28f-d887-49e3-975d-8e95dca111f6",
+    "domain": "careers-sidley.icims.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "Strict"
+  },
+  {
+    "name": "icims_JibeUserId",
+    "value": "55639876-2411-4e3d-bce2-ecc292d9592d",
+    "domain": "careers-sidley.icims.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "Strict"
+  },
+  {
+    "name": "JSESSIONID",
+    "value": "B262389BFABEDDFE11797B686CA88D6B",
+    "domain": "cdn02.icims.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "__cf_bm",
+    "value": "_yqREyGpIltaf_N_ByZIusciJwQBEZv_jZqO.2WqSlE-1772264126-1.0.1.1-EGLJDF0infxprkhLq8hWo0CnE0ShtPntfIAb31nGzo3rPsAoPJ9xa3vkQLNfAOlbF8A8DUN5FwngCw30mfGm6nrfrvBmlsKtQadD0Pz7sHI",
+    "domain": ".hcaptcha.com",
+    "path": "/",
+    "expires": 1772265927.369769,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "sp",
+    "value": "dc98c11a-7a10-43a4-9080-b598bf980672",
+    "domain": "c.talentplatform.us",
+    "path": "/",
+    "expires": 1803800374.747839,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "hmt_id",
+    "value": "a38a5acd-506c-44a0-b433-e925ae75bc23",
+    "domain": "api.hcaptcha.com",
+    "path": "/",
+    "expires": 1774856135.019586,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "None",
+    "partitionKey": "https://icims.com",
+    "_crHasCrossSiteAncestor": true
+  },
+  {
+    "name": "com.auth0.state",
+    "value": "1261479f5d8b87bfedfff93cf05be992e61d0578d178f874ed0bc2c6d44ada80",
+    "domain": "careers-sidley.icims.com",
+    "path": "/",
+    "expires": 1772264930.370852,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "com.auth0.nonce",
+    "value": "ea056211-d679-4ec4-b53f-5289f57d2186",
+    "domain": "careers-sidley.icims.com",
+    "path": "/",
+    "expires": 1772264930.370937,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "JSESSIONID",
+    "value": "2F6555C7692C4F345CB4D4F7F7EB92CF",
+    "domain": "careers-sidley.icims.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "_ga_5Y2BYGL910",
+    "value": "GS2.1.s1772264125$o1$g1$t1772264374$j16$l0$h0",
+    "domain": ".icims.com",
+    "path": "/",
+    "expires": 1806824374.117776,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "_janalytics_id.4357",
+    "value": "55639876-2411-4e3d-bce2-ecc292d9592d.1772264127.1.1772264375.1772264127.0ef3e28f-d887-49e3-975d-8e95dca111f6",
+    "domain": ".icims.com",
+    "path": "/",
+    "expires": 1806824374.682428,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "Lax"
+  }
+]

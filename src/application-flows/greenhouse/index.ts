@@ -16,7 +16,7 @@ export const greenhouseFlow = async (
     await page.waitForLoadState('domcontentloaded', TIMEOUTS.PAGE_START_SHORT);
   } catch {}
 
-  await autofillButton(page, false);
+  await autofillButton(page);
   const [missedQuestions] = await Promise.all([
     generalFill(page, {
       resumeFileSetter: true,

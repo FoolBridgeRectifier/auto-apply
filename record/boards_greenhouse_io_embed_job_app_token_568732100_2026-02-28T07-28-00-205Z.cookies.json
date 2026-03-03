@@ -1,0 +1,12 @@
+[
+  {
+    "name": "_GRECAPTCHA",
+    "value": "09AKhCRwgDxrBl12THvTT5VWpA35beKNzgM8NKbQh8U9FIfGQ9vPac1Q_hH-HOQVdG_2gBtbIdBoWNjklFPYVINy4",
+    "domain": "www.google.com",
+    "path": "/recaptcha",
+    "expires": 1787815682.605733,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  }
+]

@@ -1,4 +1,4 @@
-import { FORM_FIELDS } from '../../../config';
+import { FORM_FIELDS, OLLAMA_MODEL } from '../../../config';
 import ollama from 'ollama';
 import mammoth from 'mammoth';
 import { INPUT_TYPES } from '../../enums';
@@ -20,7 +20,7 @@ export const loadResumeText = async () => {
 
 const radioChat = async (label: string) => {
   const response = await ollama.chat({
-    model: 'qwen3:0.6b',
+    model: OLLAMA_MODEL,
     messages: [
       {
         role: 'system',
@@ -35,7 +35,10 @@ const radioChat = async (label: string) => {
     options: {
       temperature: 0, // Forces deterministic, "best-guess" output
       num_predict: 2, // Limits the model to generating only ~2 tokens
+      num_gpu: 99,
     },
+    think: false,
+    keep_alive: -1,
   });
 
   return response.message.content.trim();
@@ -43,7 +46,7 @@ const radioChat = async (label: string) => {
 
 const optionsChat = async (label: string, options?: string) => {
   const response = await ollama.chat({
-    model: 'qwen3:0.6b',
+    model: OLLAMA_MODEL,
     messages: [
       {
         role: 'system',
@@ -56,15 +59,19 @@ const optionsChat = async (label: string, options?: string) => {
     ],
     options: {
       temperature: 0,
+      num_predict: 20,
+      num_gpu: 99,
     },
+    think: false,
+    keep_alive: -1,
   });
 
   return response.message.content.trim();
 };
 
-const textChat = async (label: string) => {
+export const textChat = async (label: string) => {
   const response = await ollama.chat({
-    model: 'qwen3:0.6b',
+    model: OLLAMA_MODEL,
     messages: [
       {
         role: 'user',
@@ -73,7 +80,11 @@ const textChat = async (label: string) => {
     ],
     options: {
       temperature: 0,
+      num_predict: 50,
+      num_gpu: 99,
     },
+    think: false,
+    keep_alive: -1,
   });
 
   return response.message.content.trim();

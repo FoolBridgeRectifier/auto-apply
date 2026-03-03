@@ -1,4 +1,7 @@
 {
+  "search.exclude": {
+    "**/*.har": true
+  },
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {

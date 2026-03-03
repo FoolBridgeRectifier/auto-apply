@@ -1,12 +1,12 @@
 import { chromium, test } from '@playwright/test';
 import { openEmail, openJobRight } from './page-loaders';
 import { jobRightAppliedButton } from './page-loaders/job-right/selectors';
-import { incrementApplications } from './components';
+import { incrementApplications, closeOverlay } from './components';
 import { chromium as playwrightExtra } from 'playwright-extra';
 
 import stealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { isMocked } from '../config';
-import { applicationPageMock } from './mocks';
+import { applicationPageHarMock } from './mocks';
 import { fillApplication } from './main';
 import { loadResumeText } from './page-loaders/chat-gpt';
 
@@ -14,6 +14,10 @@ playwrightExtra.use(stealthPlugin());
 
 test.beforeAll(async () => {
   await loadResumeText();
+});
+
+test.afterAll(() => {
+  closeOverlay();
 });
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -36,6 +40,12 @@ runTestFunctions.run('main', async () => {
       await page.close();
     }
   }
+
+  const chatGptPage = await context.newPage();
+  await emailPage.goto('https://mail.google.com/mail/u/0/#inbox');
+  await chatGptPage.goto(
+    'https://chatgpt.com/c/6965ae37-de54-8332-ba71-4a66c8ba831f'
+  );
 
   const { getEmail } = await openEmail();
   const jobRightPage = await context.newPage();
@@ -71,7 +81,7 @@ test.describe('debug', () => {
         const applicationPage = await debugContext.newPage();
 
         const { getEmail } = await openEmail();
-        await applicationPageMock(applicationPage);
+        await applicationPageHarMock(applicationPage);
 
         await fillApplication(applicationPage, getEmail);
       } else {
@@ -89,7 +99,7 @@ test.describe('debug', () => {
         const { getEmail } = await openEmail();
 
         const applicationPage = await context.newPage();
-        await applicationPageMock(applicationPage);
+        await applicationPageHarMock(applicationPage);
 
         await fillApplication(applicationPage, getEmail);
       }

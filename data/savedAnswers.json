@@ -109,6 +109,74 @@
       {
         "label": "please select a race ethnicity*",
         "value": "Asian (Not Hispanic or Latino) (United States of America)"
+      },
+      {
+        "label": "if you were formerly employed at stord, please provide one or both pieces of information listed so that we may match up your former worker record with your current application.*",
+        "value": "no"
+      },
+      {
+        "label": "have you worked at presbyterian healthcare services in the past?*",
+        "value": "no"
+      },
+      {
+        "label": "are you legally authorized to work in the united states?*",
+        "value": "Yes"
+      },
+      {
+        "label": "will you now or in the future require sponsorship or other employer support to secure or maintain authorization to work in the united states? [\"other employer support\" includes but is not limited to: 1) letters of support for visa applications of any type, including o or tn visas; and 2) completion of ice form i-983.]*",
+        "value": "Yes"
+      },
+      {
+        "label": "are you legally authorized to work in the united states?*",
+        "value": "Yes"
+      },
+      {
+        "label": "will you now or in the future require sponsorship or other employer support to secure or maintain authorization to work in the united states? [\"other employer support\" includes but is not limited to: 1) letters of support for visa applications of any type, including o or tn visas; and 2) completion of ice form i-983.]*",
+        "value": "Yes"
+      },
+      {
+        "label": "are you legally authorized to work in the united states?*",
+        "value": "Yes"
+      },
+      {
+        "label": "will you now or in the future require sponsorship or other employer support to secure or maintain authorization to work in the united states? [\"other employer support\" includes but is not limited to: 1) letters of support for visa applications of any type, including o or tn visas; and 2) completion of ice form i-983.]*",
+        "value": "Yes"
+      },
+      {
+        "label": "are you legally authorized to work in the united states?*",
+        "value": "Yes"
+      },
+      {
+        "label": "will you now or in the future require sponsorship or other employer support to secure or maintain authorization to work in the united states? [\"other employer support\" includes but is not limited to: 1) letters of support for visa applications of any type, including o or tn visas; and 2) completion of ice form i-983.]*",
+        "value": "Yes"
+      },
+      {
+        "label": "please select a veteran status*",
+        "value": "I AM NOT A VETERAN"
+      },
+      {
+        "label": "language*",
+        "value": "English"
+      },
+      {
+        "label": "language*",
+        "value": "English"
+      },
+      {
+        "label": "are you legally authorized to work in the united states?*",
+        "value": "No"
+      },
+      {
+        "label": "will you now or in the future require sponsorship or other employer support to secure or maintain authorization to work in the united states? [\"other employer support\" includes but is not limited to: 1) letters of support for visa applications of any type, including o or tn visas; and 2) completion of ice form i-983.]*",
+        "value": "No"
+      },
+      {
+        "label": "please select a veteran status*",
+        "value": "I AM NOT A VETERAN"
+      },
+      {
+        "label": "language*",
+        "value": "English"
       }
     ],
     "exclude": []
@@ -124,6 +192,8 @@
         "value": ""
       }
     ],
-    "exclude": ["i currently work here"]
+    "exclude": [
+      "i currently work here"
+    ]
   }
 }

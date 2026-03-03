@@ -1,7 +1,6 @@
-import { defineConfig } from "@playwright/test";
+import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
-  testDir: "./src",
-  reporter: "",
-  retries: 3,
+  testDir: './src',
+  reporter: '',
 });

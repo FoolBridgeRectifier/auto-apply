@@ -1,0 +1,102 @@
+[
+  {
+    "name": "wd-browser-id",
+    "value": "11a4ce71-08a6-4cd7-92fc-9fd572fe7fa8",
+    "domain": "relx.wd3.myworkdayjobs.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "CALYPSO_CSRF_TOKEN",
+    "value": "390cab1f-3483-43d5-9b22-4147e555b6e5",
+    "domain": "relx.wd3.myworkdayjobs.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "wday_vps_cookie",
+    "value": "2572720394.53810.0000",
+    "domain": "relx.wd3.myworkdayjobs.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "__cflb",
+    "value": "02DiuJFb1a2FCfph91mEfCE19uWmaV9PEZCdCmZgQv5nk",
+    "domain": "relx.wd3.myworkdayjobs.com",
+    "path": "/",
+    "expires": 1772644213.485647,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "_cfuvid",
+    "value": "epgZFWb.Kq3sp8CVnZ3uyIAARQDytVr5zhn3mRkjKuQ-1772561415304-0.0.1.1-604800000",
+    "domain": ".relx.wd3.myworkdayjobs.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "timezoneOffset",
+    "value": "360",
+    "domain": "relx.wd3.myworkdayjobs.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "enablePrivacyTracking",
+    "value": "true",
+    "domain": "relx.wd3.myworkdayjobs.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "PLAY_SESSION",
+    "value": "0d06f720f4f12cd03ddd7383843618d45dd99209-relx_pSessionId=n6km8te88fkok22m34ckg4hb66&instance=vps-prod-5atcupjd.prod-vps.pr501.cust.dub.wd",
+    "domain": "relx.wd3.myworkdayjobs.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "CXS_SESSION",
+    "value": "32d68b58-b224-45a9-84a7-658523f55ed4.V0RDQzEuMIQAJQAAIM1UoRNgrR/y9cFE4ThFiyFMMO4En2rjy3mcDL5u4dOyAACMABYBMQAQcIqLjHteLSWY2ojongaWNwAAADMyZDY4YjU4LWIyMjQtNDVhOS04NGE3LTY1ODUyM2Y1NWVkNA==",
+    "domain": "relx.wd3.myworkdayjobs.com",
+    "path": "/",
+    "expires": -1,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "__cf_bm",
+    "value": "x8E.TPYKent_oqdTrIuBCPw7Z988BYaj9bOEKePgIR8-1772561454-1.0.1.1-vfZdgz9ajN9qmj1Yu5oAN2LN8Oyr.pfOstcnS0CeWuGiItydj8EQnD69kFbqkyauvvAEGcHtbKY8RIsdApaEm9GxxDa0ki9PArcZrTGoQQcbq5jFekafQ9lMgXVwANtF",
+    "domain": ".relx.wd3.myworkdayjobs.com",
+    "path": "/",
+    "expires": 1772563252.534579,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "None"
+  }
+]

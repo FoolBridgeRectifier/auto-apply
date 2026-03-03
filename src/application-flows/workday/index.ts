@@ -25,7 +25,7 @@ export const workdayFlow = async (
     console.warn('workdayFlow: apply page failed', err);
   }
 
-  await autofillButton(page, false);
+  await autofillButton(page);
 
   try {
     await selectors(page).autoFillWithResumeButton.click(TIMEOUTS.PAGE_START);
