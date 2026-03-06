@@ -8,6 +8,7 @@ import { generalFill } from '../application-flows/general';
 import { waitForFilled } from '../application-flows/helpers';
 import { getLastFillResult } from './fill-state';
 import { textChat } from '../page-loaders/chat-gpt';
+import { injectSnippets } from './snippets';
 
 interface OverlayState {
   applicationsTotal: number;
@@ -26,6 +27,7 @@ const state: OverlayState = {
 
 export const setOverlayPage = (page: Page) => {
   currentPage = page;
+  injectSnippets(page).catch(console.error);
 };
 
 export const incrementOverlayCounts = () => {
@@ -56,7 +58,10 @@ body {
   -webkit-app-region: drag;
   user-select: none;
 }
-.row { display: flex; gap: 6px; align-items: center; }
+.counter { font-size: 11px; text-align: center; line-height: 1.5; }
+.main-row { display: flex; gap: 6px; flex: 1; min-height: 0; }
+.col-left { display: flex; flex-direction: column; gap: 6px; width: 80px; }
+.col-right { display: flex; flex-direction: column; gap: 6px; flex: 1; }
 button {
   padding: 5px 10px;
   background: #ffe4e1;
@@ -66,15 +71,19 @@ button {
   font-family: monospace;
   font-weight: 600;
   color: black;
-  flex: 1;
   -webkit-app-region: no-drag;
 }
-button:hover { background: #ffd0cc; }
+.col-left button { flex: 1; }
 button:disabled { opacity: 0.6; cursor: not-allowed; }
-.counter { font-size: 11px; flex: 1; text-align: center; line-height: 1.5; }
+#autofillBtn { background: #fde8d0; }
+#autofillBtn:hover { background: #fbd8b8; }
+#submitBtn { background: #d6ecd6; }
+#submitBtn:hover { background: #c2dfc2; }
+#askAiBtn { background: #d6e4ec; }
+#askAiBtn:hover { background: #c0d4e0; }
 textarea {
+  flex: 1;
   width: 100%;
-  height: 50px;
   resize: none;
   font-family: monospace;
   font-size: 11px;
@@ -88,15 +97,17 @@ textarea {
 </style>
 </head>
 <body>
-<div class="row">
-  <button id="autofillBtn">Autofill</button>
-  <button id="submitBtn">Submit</button>
+<div class="counter" id="counter">loading...</div>
+<div class="main-row">
+  <div class="col-left">
+    <button id="autofillBtn">Autofill</button>
+    <button id="submitBtn">Submit</button>
+  </div>
+  <div class="col-right">
+    <textarea id="aiInput" placeholder="Paste text for Ask AI..."></textarea>
+    <button id="askAiBtn">Ask AI</button>
+  </div>
 </div>
-<div class="row">
-  <div class="counter" id="counter">loading...</div>
-</div>
-<textarea id="aiInput" placeholder="Paste text for Ask AI..."></textarea>
-<button id="askAiBtn">Ask AI</button>
 <script>
   async function fetchState() {
     try {
@@ -132,7 +143,18 @@ textarea {
   });
 
   document.getElementById('askAiBtn').addEventListener('click', async () => {
-    const text = document.getElementById('aiInput').value.trim();
+    const input = document.getElementById('aiInput');
+    let text = input.value.trim();
+    if (!text) {
+      try {
+        const r = await fetch('/get-selection');
+        const s = await r.json();
+        if (s.text) {
+          input.value = s.text;
+          text = s.text;
+        }
+      } catch {}
+    }
     if (!text) return;
     const btn = document.getElementById('askAiBtn');
     btn.textContent = '...';
@@ -157,6 +179,18 @@ textarea {
 
   fetchState();
   setInterval(fetchState, 2000);
+
+  async function pollSelection() {
+    try {
+      const r = await fetch('/get-selection');
+      const s = await r.json();
+      if (s.text) {
+        const input = document.getElementById('aiInput');
+        if (input.value !== s.text) input.value = s.text;
+      }
+    } catch {}
+  }
+  setInterval(pollSelection, 500);
 </script>
 </body>
 </html>`;
@@ -172,7 +206,7 @@ export const startOverlayServer = (
 
     Object.assign(state, initialState);
 
-    serverInstance = http.createServer((req, res) => {
+    serverInstance = http.createServer(async (req, res) => {
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
       res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -214,6 +248,21 @@ export const startOverlayServer = (
               console.error('[Overlay] submit failed:', err);
             }
           })();
+        }
+        return;
+      }
+
+      if (req.url === '/get-selection' && req.method === 'GET') {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        if (currentPage) {
+          try {
+            const selected = await currentPage.evaluate(() => window.getSelection()?.toString() ?? '');
+            res.end(JSON.stringify({ text: selected }));
+          } catch {
+            res.end(JSON.stringify({ text: '' }));
+          }
+        } else {
+          res.end(JSON.stringify({ text: '' }));
         }
         return;
       }

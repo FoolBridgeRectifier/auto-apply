@@ -6,8 +6,6 @@ import { basicButtonClick } from '../../helpers';
 import { autofillButton } from '../../components';
 import { WORKDAY_PAGES } from './enums';
 import { dropdownComponent, radioComponent } from './components';
-import { bindSaveToButton } from '../helpers';
-import { IGeneralFillResponse } from '../general/interfaces';
 import { gmail_v1 } from 'googleapis';
 
 export const workdayFlow = async (
@@ -101,19 +99,11 @@ export const workdayFlow = async (
           console.log('Referral input not found');
         }
 
-        const personalQuestionsMissed: IGeneralFillResponse = await generalFill(
+        await generalFill(
           page,
           { resume: true },
           { dropdownComponent, radioComponent }
         );
-
-        // await bindSaveToButton(
-        //   'personalSave',
-        //   page,
-        //   selectors(page).continueButton.last(),
-        //   personalQuestionsMissed,
-        //   dropdownComponent
-        // );
 
         pageVisited.isPersonal = true;
       }
@@ -133,20 +123,6 @@ export const workdayFlow = async (
         //   await selectors(page).addEducationButton.click();
         // }
 
-        // skills
-        // await selectors(page).skillsTextClick.isVisible();
-        // for (const skill of FORM_FIELDS.SKILLS) {
-        //   await selectors(page).skillsTextClick.click();
-        //   await selectors(page).skillsTextInput.isVisible();
-        //   await selectors(page).skillsTextInput.clear();
-        //   await selectors(page).skillsTextInput.click();
-        //   await selectors(page).skillsTextInput.fill(skill);
-        //   await selectors(page).skillsTextInput.press("Enter");
-        //   try {
-        //     await page.getByText(skill).first().click({ timeout: 5000 });
-        //   } catch {}
-        // }
-
         // autofill
         // const experienceQuestionsMissed: IGeneralFillResponse =
         //   await generalFill(
@@ -156,13 +132,6 @@ export const workdayFlow = async (
         //   );
 
         pageVisited.isExperience = true;
-        // await bindSaveToButton(
-        //   "experienceSave",
-        //   page,
-        //   selectors(page).continueButton.last(),
-        //   experienceQuestionsMissed,
-        //   dropdownComponent,
-        // );
       }
     } catch (err) {
       console.warn('workdayFlow: experience/education/skills page failed', err);
@@ -177,19 +146,12 @@ export const workdayFlow = async (
         !pageVisited.isApplication
       ) {
         // autofill
-        const extraQuestionsMissed: IGeneralFillResponse = await generalFill(
+        await generalFill(
           page,
           { resume: true },
           { dropdownComponent, radioComponent }
         );
 
-        // await bindSaveToButton(
-        //   'applicationSave',
-        //   page,
-        //   selectors(page).continueButton.last(),
-        //   extraQuestionsMissed,
-        //   dropdownComponent
-        // );
         pageVisited.isApplication = true;
       }
     } catch (err) {
@@ -203,20 +165,13 @@ export const workdayFlow = async (
         !pageVisited.isDisclosure
       ) {
         // autofill
-        const disclosureQuestionsMissed: IGeneralFillResponse =
-          await generalFill(
-            page,
-            { resume: true },
-            { dropdownComponent, radioComponent }
-          );
 
-        // await bindSaveToButton(
-        //   'disclosureSave',
-        //   page,
-        //   selectors(page).continueButton.last(),
-        //   disclosureQuestionsMissed,
-        //   dropdownComponent
-        // );
+        await generalFill(
+          page,
+          { resume: true },
+          { dropdownComponent, radioComponent }
+        );
+
         pageVisited.isDisclosure = true;
       }
     } catch (err) {
@@ -230,19 +185,12 @@ export const workdayFlow = async (
         !pageVisited.isIdentity
       ) {
         // autofill
-        const identityQuestionsMissed: IGeneralFillResponse = await generalFill(
+        await generalFill(
           page,
           { resume: true },
           { dropdownComponent, radioComponent }
         );
 
-        // await bindSaveToButton(
-        //   'identitySave',
-        //   page,
-        //   selectors(page).continueButton.last(),
-        //   identityQuestionsMissed,
-        //   dropdownComponent
-        // );
         pageVisited.isIdentity = true;
         break;
       }
@@ -250,11 +198,4 @@ export const workdayFlow = async (
       console.warn('workdayFlow: identity page failed', err);
     }
   }
-
-  // await selectors(page).experiencePage;
-  // await selectors(page).addEducationButton.click();
-  // await selectors(page).addSchoolInput.fill(FORM_FIELDS.COLLEGES.MASTERS.NAME);
-
-  // await selectors(page).educationDegreeButton.click();
-  // await selectors(page).educationDegreeSelect.click();
 };

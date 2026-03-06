@@ -2,8 +2,6 @@ import { Page } from '@playwright/test';
 import { selectors } from './selectors';
 import { TIMEOUTS } from '../../../config';
 import { generalFill } from '../general';
-import { autofillButton } from '../../components';
-import { bindSaveToButton } from '../helpers';
 import { gmail_v1 } from 'googleapis';
 import { dropdownComponent } from './components';
 import { radioComponent } from '../general/components';
@@ -16,8 +14,7 @@ export const greenhouseFlow = async (
     await page.waitForLoadState('domcontentloaded', TIMEOUTS.PAGE_START_SHORT);
   } catch {}
 
-  await autofillButton(page);
-  const [missedQuestions] = await Promise.all([
+  await Promise.all([
     generalFill(page, {
       resumeFileSetter: true,
       text: true,
@@ -32,14 +29,6 @@ export const greenhouseFlow = async (
       { dropdownComponent, radioComponent }
     ),
   ]);
-
-  // await bindSaveToButton(
-  //   'saveOnSubmit',
-  //   page,
-  //   selectors(page).submitApplicationButton.last(),
-  //   missedQuestions,
-  //   dropdownComponent
-  // );
 
   try {
     await selectors(page).securityCodeInput.waitFor({

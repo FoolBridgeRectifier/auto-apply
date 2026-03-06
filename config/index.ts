@@ -169,6 +169,23 @@ export const FORM_FIELDS = {
     RELOCATION: 'Open to relocate anywhere in the US',
     IMMIGRATION_STATUS: 'Currently on H1B with my employer.',
   },
+  JOB_TITLES: {
+    SENIOR: 'Senior Software Engineer',
+    DEFAULT: 'Software Engineer',
+  },
+  AVAILABILITY: {
+    IMMEDIATELY: 'Immediately',
+    NA: 'N/A',
+  },
+  RATES: {
+    YEARLY: '96,000$/Year',
+    HOURLY: '48$/Hour',
+  },
+  DM_TEMPLATES: {
+    SHORT:
+      'Hi, I came across your Software Engineer post. If you know about this role I was wondering if you can give me a referral or view my resume for the role? Please let me know. Thank you for your time.',
+    LONG: 'Hi, \nI came across a Software Engineer post. If you know about this role I was wondering if you could give me a referral or view my resume for the role? Please let me know. Or we could connect and talk about my cute puppy. Thank you for your time.',
+  },
   SKILLS: [
     'React',
     'Angular',
@@ -203,4 +220,56 @@ export const FORM_FIELDS = {
     'GenAI Copilot',
     'Chrome Dev Tools',
   ],
+};
+
+export const SNIPPETS: Record<string, string> = {
+  // Personal
+  ss: `${FORM_FIELDS.PERSONAL_DETAILS.FIRST_NAME} ${FORM_FIELDS.PERSONAL_DETAILS.LAST_NAME}`,
+  sa: FORM_FIELDS.PERSONAL_DETAILS.FIRST_NAME,
+  sm: 'Somasunder',
+  sh: 'Shreenidark@1990',
+  Zx: FORM_FIELDS.PERSONAL_DETAILS.LOGIN.SECONDARY_PASSWORD,
+  cv: 'Cvfd1880@',
+  zat: FORM_FIELDS.PERSONAL_DETAILS.LOGIN.USERNAME,
+  em: FORM_FIELDS.PERSONAL_DETAILS.EMAIL,
+  ln: FORM_FIELDS.PERSONAL_DETAILS.LINKEDIN,
+  ll: FORM_FIELDS.APPLICATION_FIELDS.LINKEDIN_LABEL,
+  '97': FORM_FIELDS.PERSONAL_DETAILS.PHONE_NUMBER,
+
+  // Address
+  '16': FORM_FIELDS.PERSONAL_DETAILS.ADDRESS.FIRST_LINE,
+  '21': FORM_FIELDS.PERSONAL_DETAILS.ADDRESS.ZIP,
+  md: FORM_FIELDS.PERSONAL_DETAILS.ADDRESS.STATE,
+  ba: FORM_FIELDS.PERSONAL_DETAILS.ADDRESS.CITY,
+  us: FORM_FIELDS.PERSONAL_DETAILS.ADDRESS.COUNTRY,
+
+  // Education
+  njit: FORM_FIELDS.COLLEGES.MASTERS.NAME,
+  srm: FORM_FIELDS.COLLEGES.BACHELORS.NAME,
+  cs: FORM_FIELDS.COLLEGES.MASTERS.MAJOR,
+  ee: FORM_FIELDS.COLLEGES.BACHELORS.MAJOR,
+
+  // Companies
+  am: FORM_FIELDS.EXPERIENCES.AMERIPRISE.COMPANY,
+  nm: FORM_FIELDS.EXPERIENCES.NORTHWESTERN.COMPANY,
+  ae: 'Aekya Inc',
+  en: 'Envogue',
+
+  // Job / application
+  sse: FORM_FIELDS.JOB_TITLES.SENIOR,
+  se: FORM_FIELDS.JOB_TITLES.DEFAULT,
+  ng: FORM_FIELDS.APPLICATION_FIELDS.SALARY_TYPE,
+  rl: FORM_FIELDS.APPLICATION_FIELDS.RELOCATION,
+  h1: FORM_FIELDS.APPLICATION_FIELDS.IMMIGRATION_STATUS,
+  '12': FORM_FIELDS.APPLICATION_FIELDS.EXPECTED_SALARY,
+  '96': FORM_FIELDS.RATES.YEARLY,
+  '48': FORM_FIELDS.RATES.HOURLY,
+  im: FORM_FIELDS.AVAILABILITY.IMMEDIATELY,
+  na: FORM_FIELDS.AVAILABILITY.NA,
+
+  // Long text
+  nje: 'Developed a data visualization tree using ReactJS, NodeJS, Docker, Kubernetes, and d3.js for intuitive exploration of multidimensional data. Implemented parallel computing using Python, Numpy, and CUDA, \nEngineered a multi-agent reinforced learning model simulating naval ships and integrated deep learning models on TensorFlow. \nDeveloped Convolutional Neural Networks (CNN), Recurrent Neural Networks (RNN), Natural Language Processing (NLP), Optical Character Recognition (OCR), and Segmentation models on TensorFlow, Keras, and PyTorch, leveraging CUDA for enhanced computational efficiency.',
+  are: '• Developed a data visualization tree using ReactJS, NodeJS, Docker, Kubernetes, and d3.js for intuitive exploration of multidimensional data. Implemented parallel computing using Python, Numpy, and CUDA, \n• Engineered a multi-agent reinforced learning model simulating naval ships and integrated deep learning models on TensorFlow. \n• Developed Convolutional Neural Networks (CNN), Recurrent Natural Networks (RNN), Natural Language Processing (NLP), Optical Character Recognition (OCR), and Segmentation models on TensorFlow, Keras, and PyTorch, leveraging CUDA for enhanced computational efficiency.',
+  txt: FORM_FIELDS.DM_TEMPLATES.SHORT,
+  cte: FORM_FIELDS.DM_TEMPLATES.LONG,
 };
