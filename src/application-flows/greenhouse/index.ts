@@ -33,13 +33,13 @@ export const greenhouseFlow = async (
     ),
   ]);
 
-  await bindSaveToButton(
-    'saveOnSubmit',
-    page,
-    selectors(page).submitApplicationButton.last(),
-    missedQuestions,
-    dropdownComponent
-  );
+  // await bindSaveToButton(
+  //   'saveOnSubmit',
+  //   page,
+  //   selectors(page).submitApplicationButton.last(),
+  //   missedQuestions,
+  //   dropdownComponent
+  // );
 
   try {
     await selectors(page).securityCodeInput.waitFor({
@@ -57,6 +57,6 @@ export const greenhouseFlow = async (
     }
     await selectors(page).submitApplicationButton.click();
   } catch (e) {
-    console.log('GG', e);
+    console.log('Failed submit code', e);
   }
 };

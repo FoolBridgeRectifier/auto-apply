@@ -43,7 +43,7 @@ const writeToDisk = () => {
 loadFromDisk();
 
 const savedAnswersState = {
-  getSavedAnswer: (label: string, type: 'text' | 'dropdown' | 'radio') => {
+  getSavedAnswers: (label: string, type: 'text' | 'dropdown' | 'radio') => {
     if (
       data[type].exclude.some((excludeLabel) =>
         new RegExp(filterAlNums(excludeLabel), 'i').test(filterAlNums(label))
@@ -52,23 +52,23 @@ const savedAnswersState = {
       return;
     }
 
-    const formValue = data[type].include.find(({ label: includeLabel }) =>
-      new RegExp(filterAlNums(includeLabel), 'i').test(filterAlNums(label))
-    );
-
-    return formValue
-      ? {
-          matcher: new RegExp(filterAlNums(formValue.label), 'i'),
-          value: formValue.value,
-          optionMatcher: new RegExp(filterAlNums(formValue.value), 'i'),
-        }
-      : undefined;
+    return data[type].include.map(({ label, value }) => ({
+      matcher: new RegExp(filterAlNums(label), 'i'),
+      value: value,
+      optionMatcher: new RegExp(filterAlNums(value), 'i'),
+    }));
   },
 
   setSavedAnswer: (
     answerToSave: { label: string; value: string },
     type: 'text' | 'dropdown' | 'radio'
   ) => {
+    const alreadyExists = data[type].include.some(({ label }) =>
+      new RegExp(filterAlNums(label), 'i').test(
+        filterAlNums(answerToSave.label)
+      )
+    );
+    if (alreadyExists) return;
     data[type].include.push(answerToSave);
     writeToDisk();
   },
@@ -86,7 +86,7 @@ const savedAnswersState = {
 export const syncSavedAnswers = () => savedAnswersState;
 
 // Check all inputs for filled values
-const waitForFilled = async (
+export const waitForFilled = async (
   page: Page,
   missedFields: IGeneralFillResponse,
   dropdownComponent: IDropdownComponent = defaultDropdownComponent

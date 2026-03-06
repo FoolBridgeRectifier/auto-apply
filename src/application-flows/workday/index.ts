@@ -107,13 +107,13 @@ export const workdayFlow = async (
           { dropdownComponent, radioComponent }
         );
 
-        await bindSaveToButton(
-          'personalSave',
-          page,
-          selectors(page).continueButton.last(),
-          personalQuestionsMissed,
-          dropdownComponent
-        );
+        // await bindSaveToButton(
+        //   'personalSave',
+        //   page,
+        //   selectors(page).continueButton.last(),
+        //   personalQuestionsMissed,
+        //   dropdownComponent
+        // );
 
         pageVisited.isPersonal = true;
       }
@@ -183,13 +183,13 @@ export const workdayFlow = async (
           { dropdownComponent, radioComponent }
         );
 
-        await bindSaveToButton(
-          'applicationSave',
-          page,
-          selectors(page).continueButton.last(),
-          extraQuestionsMissed,
-          dropdownComponent
-        );
+        // await bindSaveToButton(
+        //   'applicationSave',
+        //   page,
+        //   selectors(page).continueButton.last(),
+        //   extraQuestionsMissed,
+        //   dropdownComponent
+        // );
         pageVisited.isApplication = true;
       }
     } catch (err) {
@@ -210,13 +210,13 @@ export const workdayFlow = async (
             { dropdownComponent, radioComponent }
           );
 
-        await bindSaveToButton(
-          'disclosureSave',
-          page,
-          selectors(page).continueButton.last(),
-          disclosureQuestionsMissed,
-          dropdownComponent
-        );
+        // await bindSaveToButton(
+        //   'disclosureSave',
+        //   page,
+        //   selectors(page).continueButton.last(),
+        //   disclosureQuestionsMissed,
+        //   dropdownComponent
+        // );
         pageVisited.isDisclosure = true;
       }
     } catch (err) {
@@ -236,13 +236,13 @@ export const workdayFlow = async (
           { dropdownComponent, radioComponent }
         );
 
-        await bindSaveToButton(
-          'identitySave',
-          page,
-          selectors(page).continueButton.last(),
-          identityQuestionsMissed,
-          dropdownComponent
-        );
+        // await bindSaveToButton(
+        //   'identitySave',
+        //   page,
+        //   selectors(page).continueButton.last(),
+        //   identityQuestionsMissed,
+        //   dropdownComponent
+        // );
         pageVisited.isIdentity = true;
         break;
       }

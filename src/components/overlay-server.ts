@@ -5,6 +5,8 @@ import fs from 'fs';
 import { exec } from 'child_process';
 import { Page } from '@playwright/test';
 import { generalFill } from '../application-flows/general';
+import { waitForFilled } from '../application-flows/helpers';
+import { getLastFillResult } from './fill-state';
 import { textChat } from '../page-loaders/chat-gpt';
 
 interface OverlayState {
@@ -88,6 +90,7 @@ textarea {
 <body>
 <div class="row">
   <button id="autofillBtn">Autofill</button>
+  <button id="submitBtn">Submit</button>
 </div>
 <div class="row">
   <div class="counter" id="counter">loading...</div>
@@ -112,6 +115,18 @@ textarea {
       await fetch('/autofill', { method: 'POST' });
     } finally {
       btn.textContent = 'Autofill';
+      btn.disabled = false;
+    }
+  });
+
+  document.getElementById('submitBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('submitBtn');
+    btn.textContent = '...';
+    btn.disabled = true;
+    try {
+      await fetch('/submit', { method: 'POST' });
+    } finally {
+      btn.textContent = 'Submit';
       btn.disabled = false;
     }
   });
@@ -177,7 +192,29 @@ export const startOverlayServer = (
       if (req.url === '/autofill' && req.method === 'POST') {
         res.writeHead(200);
         res.end('{}');
-        if (currentPage) generalFill(currentPage).catch(console.error);
+        if (currentPage) {
+          generalFill(currentPage).catch(console.error);
+        }
+        return;
+      }
+
+      if (req.url === '/submit' && req.method === 'POST') {
+        res.writeHead(200);
+        res.end('{}');
+        if (currentPage) {
+          (async () => {
+            try {
+              const fillResult = getLastFillResult();
+              if (fillResult) {
+                await waitForFilled(currentPage!, fillResult);
+              }
+              const submitBtn = await findSubmitButton(currentPage!);
+              if (submitBtn) await submitBtn.click();
+            } catch (err) {
+              console.error('[Overlay] submit failed:', err);
+            }
+          })();
+        }
         return;
       }
 
@@ -206,6 +243,23 @@ export const startOverlayServer = (
       resolve((serverInstance!.address() as { port: number }).port);
     });
   });
+
+const findSubmitButton = async (page: Page) => {
+  const selectors = [
+    'button[type="submit"]',
+    'input[type="submit"]',
+    'button:has-text("Submit")',
+    'button:has-text("Apply")',
+    'button:has-text("Apply Now")',
+    'button:has-text("Next")',
+    'button:has-text("Continue")',
+  ];
+  for (const sel of selectors) {
+    const loc = page.locator(sel).first();
+    if ((await loc.count()) > 0) return loc;
+  }
+  return null;
+};
 
 export const setWindowAlwaysOnTop = () => {
   if (process.platform !== 'win32') return;

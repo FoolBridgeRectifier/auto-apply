@@ -35,7 +35,9 @@ export const closeOverlay = () => {
   _overlayPid = undefined;
   try {
     if (process.platform === 'win32') {
-      spawnSync('taskkill', ['/F', '/PID', String(pid), '/T'], { stdio: 'ignore' });
+      spawnSync('taskkill', ['/F', '/PID', String(pid), '/T'], {
+        stdio: 'ignore',
+      });
     } else {
       process.kill(pid, 'SIGTERM');
     }
@@ -64,12 +66,15 @@ export const autofillButton = async (page: Page) => {
 
   if (!_overlayLaunched) {
     _overlayLaunched = true;
+    const windowWidth = 320;
+    const screen = getPrimaryScreenSize();
+    const posX = screen.width - windowWidth - 10;
     const cp = spawn(
       getChromePath(),
       [
         `--app=http://127.0.0.1:${port}`,
-        '--window-size=320,240',
-        '--window-position=1600,0',
+        `--window-size=${windowWidth},240`,
+        `--window-position=${posX},10`,
         `--user-data-dir=${path.join(os.tmpdir(), 'auto-apply-overlay')}`,
         '--no-first-run',
         '--no-default-browser-check',
@@ -82,11 +87,44 @@ export const autofillButton = async (page: Page) => {
   }
 };
 
+const getPrimaryScreenSize = (): { width: number; height: number } => {
+  if (process.platform === 'win32') {
+    try {
+      const result = spawnSync(
+        'powershell',
+        [
+          '-NoProfile',
+          '-Command',
+          'Add-Type -AssemblyName System.Windows.Forms; $s = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds; Write-Output "$($s.Width) $($s.Height)"',
+        ],
+        { encoding: 'utf8' }
+      );
+      const parts = result.stdout.trim().split(' ').map(Number);
+      if (parts.length === 2 && parts[0]! > 0 && parts[1]! > 0) {
+        return { width: parts[0]!, height: parts[1]! };
+      }
+    } catch {}
+  }
+  return { width: 1920, height: 1080 };
+};
+
 const getChromePath = (): string => {
   const candidates = [
-    process.env['PROGRAMFILES'] && path.join(process.env['PROGRAMFILES'], 'Google\\Chrome\\Application\\chrome.exe'),
-    process.env['PROGRAMFILES(X86)'] && path.join(process.env['PROGRAMFILES(X86)'], 'Google\\Chrome\\Application\\chrome.exe'),
-    process.env['LOCALAPPDATA'] && path.join(process.env['LOCALAPPDATA'], 'Google\\Chrome\\Application\\chrome.exe'),
+    process.env['PROGRAMFILES'] &&
+      path.join(
+        process.env['PROGRAMFILES'],
+        'Google\\Chrome\\Application\\chrome.exe'
+      ),
+    process.env['PROGRAMFILES(X86)'] &&
+      path.join(
+        process.env['PROGRAMFILES(X86)'],
+        'Google\\Chrome\\Application\\chrome.exe'
+      ),
+    process.env['LOCALAPPDATA'] &&
+      path.join(
+        process.env['LOCALAPPDATA'],
+        'Google\\Chrome\\Application\\chrome.exe'
+      ),
   ].filter(Boolean) as string[];
 
   return candidates.find((p) => fs.existsSync(p)) ?? chromium.executablePath();

@@ -84,14 +84,12 @@ const getLabel = async (page: Page, locator: Locator, isRadio?: boolean) => {
   };
 };
 
-export const getRequiredInputs = async (
-  page: Page,
-  components: {
-    dropdownComponent?: IDropdownComponent;
-  } = { dropdownComponent }
-) => {
-  // for text inputs
-  let requiredTextLocators = [];
+export const getTextInputs = async (page: Page) => {
+  const requiredTextLocators: Array<{
+    locator: Locator;
+    label: string;
+    type: string;
+  }> = [];
   let textInputLocators: Locator[] = [];
   try {
     if (await page.getByRole('textbox').first().isVisible(TIMEOUTS.FIND)) {
@@ -117,10 +115,20 @@ export const getRequiredInputs = async (
     }
   }
 
-  // for dropdowns
-  const requiredDropdownLocators = [];
+  return requiredTextLocators;
+};
+
+export const getDropdownInputs = async (
+  page: Page,
+  components: { dropdownComponent?: IDropdownComponent } = { dropdownComponent }
+) => {
+  const requiredDropdownLocators: Array<{
+    locator: Locator;
+    label: string;
+    type: string;
+  }> = [];
   const dropdownLocators = await (
-    components?.dropdownComponent as IDropdownComponent
+    components.dropdownComponent as IDropdownComponent
   ).allLocator(page);
 
   for (const dropdownLocator of dropdownLocators) {
@@ -134,14 +142,11 @@ export const getRequiredInputs = async (
       });
     }
   }
-  const dropdownLabels = requiredDropdownLocators.map(
-    (requiredDropdownLocator) => requiredDropdownLocator.label
-  );
-  requiredTextLocators = requiredTextLocators.filter(
-    ({ label }) => !dropdownLabels.includes(label)
-  );
 
-  // for radios
+  return requiredDropdownLocators;
+};
+
+export const getRadioInputs = async (page: Page) => {
   const formattedRadioLocators: Array<IRadioGroup> = [];
   let radioLocators: Locator[] = [];
   try {
@@ -185,7 +190,10 @@ export const getRequiredInputs = async (
     }
   }
 
-  // for resume
+  return formattedRadioLocators;
+};
+
+export const getResumeInput = async (page: Page) => {
   const resumeLinkLocator = page
     .locator('button, a')
     .filter({
@@ -195,7 +203,6 @@ export const getRequiredInputs = async (
     .first();
   const resumeLink = resumeLinkLocator || null;
 
-  // for resume
   let resumeFileLocator = null;
   const fileLocators = await page.locator('input[type="file"]').all();
 
@@ -216,15 +223,10 @@ export const getRequiredInputs = async (
   }
 
   return {
-    [INPUT_TYPES.TEXT]: requiredTextLocators,
-    [INPUT_TYPES.DROPDOWN]: requiredDropdownLocators,
-    [INPUT_TYPES.RADIO]: formattedRadioLocators,
-    [INPUT_TYPES.FILE]: {
-      linkLocator: resumeLink,
-      locator: resumeFileLocator?.locator,
-      label: resumeFileLocator?.label,
-      type: INPUT_TYPES.FILE,
-    },
+    linkLocator: resumeLink,
+    locator: resumeFileLocator?.locator,
+    label: resumeFileLocator?.label,
+    type: INPUT_TYPES.FILE,
   };
 };
 
@@ -233,3 +235,29 @@ export const filterAlNums = (str: string) =>
     .replace(/[^a-zA-Z0-9 ]/g, '')
     .trim()
     .toLowerCase();
+
+export const getBestFieldMatch = (
+  matchers: { value?: string; matcher: RegExp; optionMatcher?: RegExp }[],
+  label: string,
+  options?: { label: string }[]
+) => {
+  const matches = matchers
+    .filter(
+      ({ matcher, optionMatcher }) =>
+        matcher.test(filterAlNums(label)) &&
+        (!optionMatcher ||
+          !options ||
+          options.some(({ label }) => optionMatcher.test(filterAlNums(label))))
+    )
+    .sort((a, b) => {
+      const aLen = a.matcher.exec(filterAlNums(label))?.[0]?.length ?? 0;
+      const bLen = b.matcher.exec(filterAlNums(label))?.[0]?.length ?? 0;
+      return bLen - aLen;
+    });
+
+  if (!matches.length) {
+    return undefined;
+  }
+
+  return options ? matches[0].optionMatcher : matches[0].value;
+};

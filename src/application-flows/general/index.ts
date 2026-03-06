@@ -1,11 +1,13 @@
 import { Page } from '@playwright/test';
-import { filterAlNums, getRequiredInputs } from './helpers';
 import {
-  DROPDOWN_MAPPER,
-  FORM_NAME_CHECK,
-  RADIO_CHECKS,
-  TEXT_MAPPER,
-} from './mappers';
+  filterAlNums,
+  getBestFieldMatch,
+  getDropdownInputs,
+  getRadioInputs,
+  getResumeInput,
+  getTextInputs,
+} from './helpers';
+import { DROPDOWN_MAPPER, RADIO_CHECKS, TEXT_MAPPER } from './mappers';
 import { INPUT_TYPES } from '../../enums';
 import { FORM_FIELDS, TIMEOUTS } from '../../../config';
 import { dropdownComponent, radioComponent } from './components';
@@ -13,6 +15,7 @@ import { IDropdownComponent, IRadioComponent } from '../interfaces';
 import { syncSavedAnswers } from '../helpers';
 import { IGeneralFillResponse } from './interfaces';
 import { openChatGpt } from '../../page-loaders';
+import { setLastFillResult } from '../../components/fill-state';
 
 const savedAnswersState = syncSavedAnswers();
 
@@ -31,25 +34,22 @@ export async function generalFill(
     radioComponent?: IRadioComponent;
   } = { dropdownComponent, radioComponent }
 ): Promise<IGeneralFillResponse> {
-  const {
-    [INPUT_TYPES.TEXT]: textFields,
-    [INPUT_TYPES.DROPDOWN]: dropdownFields,
-    [INPUT_TYPES.RADIO]: radioFields,
-    [INPUT_TYPES.FILE]: resumeField,
-  } = await getRequiredInputs(page, components);
-
   const missedRequiredTexts = [];
   const missedRequiredDropdown = [];
   const missedRequiredRadios = [];
 
   let resumeError = null;
-  // resume
-  if (resumeField && !skips.resume) {
+
+  // resume — handled once, not in the loop
+  if (!skips.resume) {
     try {
+      const resumeField = await getResumeInput(page);
+      resumeError =
+        (resumeField.locator || resumeField.linkLocator) && 'Not Found';
       if (resumeField.linkLocator && !skips.resumeFileChooser) {
         const [fileChooser] = await Promise.all([
-          page.waitForEvent('filechooser', TIMEOUTS.CLICK), // Wait for the new page to open
-          resumeField.linkLocator.click(TIMEOUTS.CLICK), // Click the apply button
+          page.waitForEvent('filechooser', TIMEOUTS.CLICK),
+          resumeField.linkLocator.click(TIMEOUTS.CLICK),
         ]);
         try {
           await fileChooser.setFiles(
@@ -70,62 +70,88 @@ export async function generalFill(
       resumeError = e;
     }
   }
-  // text fields
+
+  // text fields — loop until no new inputs appear
+  const visitedText = new Set<string>();
+  let nameUsed = false;
+
   if (!skips.text) {
-    // eslint-disable-next-line no-useless-assignment
-    let nameUsed = false;
-    for (const field of textFields) {
-      nameUsed = FORM_NAME_CHECK.test(field.label);
+    while (true) {
+      const textFields = await getTextInputs(page);
+      const newText = textFields.filter((f) => !visitedText.has(f.label));
 
-      let formValue =
-        savedAnswersState.getSavedAnswer(field.label, INPUT_TYPES.TEXT)
-          ?.value ||
-        TEXT_MAPPER.find(({ matcher }) =>
-          matcher.test(filterAlNums(field.label))
-        )?.value;
+      if (!newText.length) break;
 
-      try {
-        if (!formValue) {
-          formValue = await openChatGpt(INPUT_TYPES.TEXT, field.label);
+      for (const field of newText) {
+        visitedText.add(field.label);
+
+        let formValue = getBestFieldMatch(
+          [
+            ...savedAnswersState.getSavedAnswers(field.label, INPUT_TYPES.TEXT),
+            ...TEXT_MAPPER,
+          ],
+          field.label
+        ) as string | undefined;
+
+        try {
+          if (!formValue) {
+            formValue = await openChatGpt(INPUT_TYPES.TEXT, field.label);
+            missedRequiredTexts.push(field);
+          }
+          if (formValue) {
+            await field.locator.clear(TIMEOUTS.CLICK);
+            await field.locator.fill(formValue, TIMEOUTS.CLICK);
+          } else {
+            missedRequiredTexts.push(field);
+          }
+
+          // when only full name
+          if (!nameUsed && field.label.includes('name')) {
+            await field.locator.clear(TIMEOUTS.CLICK);
+            await field.locator.fill(
+              `${FORM_FIELDS.PERSONAL_DETAILS.FIRST_NAME} ${FORM_FIELDS.PERSONAL_DETAILS.LAST_NAME}`,
+              TIMEOUTS.CLICK
+            );
+            nameUsed = true;
+          }
+        } catch {
+          console.error('TEXT_NOT_FILLED', field.label);
           missedRequiredTexts.push(field);
         }
-        if (formValue) {
-          await field.locator.clear(TIMEOUTS.CLICK);
-          await field.locator.fill(formValue, TIMEOUTS.CLICK);
-        } else {
-          missedRequiredTexts.push(field);
-        }
-
-        // when only full name
-        if (!nameUsed && field.label.includes('name')) {
-          await field.locator.clear(TIMEOUTS.CLICK);
-          await field.locator.fill(
-            `${FORM_FIELDS.PERSONAL_DETAILS.FIRST_NAME} ${FORM_FIELDS.PERSONAL_DETAILS.LAST_NAME}`,
-            TIMEOUTS.CLICK
-          );
-          nameUsed = true;
-        }
-      } catch {
-        console.error('TEXT_NOT_FILLED', field.label);
-        missedRequiredTexts.push(field);
       }
     }
   }
 
-  // dropdown fields
+  // dropdown fields — loop until no new inputs appear
+  const visitedDropdown = new Set<string>();
+
   if (!skips.dropdown) {
-    for (const field of dropdownFields) {
+    while (true) {
+      const dropdownFields = await getDropdownInputs(page, components);
+      const newDropdown = dropdownFields.filter(
+        (f) => !visitedDropdown.has(f.label)
+      );
+
+      if (!newDropdown.length) break;
+
+      const field = newDropdown[0];
+      visitedDropdown.add(field.label);
       let isFilled = false;
       const options = await (
         components.dropdownComponent as IDropdownComponent
       ).allOptionsLocator(field.locator, page);
 
-      let formValue: RegExp | string | undefined =
-        savedAnswersState.getSavedAnswer(field.label, INPUT_TYPES.DROPDOWN)
-          ?.optionMatcher ||
-        DROPDOWN_MAPPER.find(({ matcher }) =>
-          matcher.test(filterAlNums(field.label))
-        )?.optionMatcher;
+      let formValue: RegExp | string | undefined = getBestFieldMatch(
+        [
+          ...savedAnswersState.getSavedAnswers(
+            field.label,
+            INPUT_TYPES.DROPDOWN
+          ),
+          ...DROPDOWN_MAPPER,
+        ],
+        field.label,
+        options
+      ) as RegExp | undefined;
       try {
         if (!formValue) {
           formValue = await openChatGpt(
@@ -144,7 +170,6 @@ export async function generalFill(
           );
 
           if (chosenOption) {
-            // need wait so it fills
             await (
               components.dropdownComponent as IDropdownComponent
             ).optionSelect(page, field, chosenOption);
@@ -163,75 +188,90 @@ export async function generalFill(
     }
   }
 
-  // radio fields
+  // radio fields — loop until no new inputs appear
+  const visitedRadio = new Set<string>();
+
   if (!skips.radio) {
-    for (const radioGroup of radioFields) {
-      try {
-        if (!radioGroup.radioLabel) {
-          for (const field of radioGroup.options) {
-            // If not radio group detected
-            const formValue =
-              savedAnswersState.getSavedAnswer(
-                field.label,
-                INPUT_TYPES.RADIO
-              ) ??
-              RADIO_CHECKS.some(({ matcher }) =>
-                matcher.test(filterAlNums(field.label))
+    while (true) {
+      const radioFields = await getRadioInputs(page);
+      const newRadio = radioFields.filter(
+        (g) => !visitedRadio.has(g.radioLabel)
+      );
+
+      if (!newRadio.length) break;
+
+      for (const radioGroup of newRadio) {
+        visitedRadio.add(radioGroup.radioLabel);
+        try {
+          if (!radioGroup.radioLabel) {
+            for (const field of radioGroup.options) {
+              const formValue = [
+                ...savedAnswersState.getSavedAnswers(
+                  field.label,
+                  INPUT_TYPES.RADIO
+                ),
+                ...RADIO_CHECKS,
+              ].some(({ matcher }) => matcher.test(filterAlNums(field.label)));
+
+              let isFilled = false;
+              if (formValue) {
+                isFilled = await (
+                  components.radioComponent as IRadioComponent
+                ).optionSelect(page, field);
+              }
+
+              if (!isFilled) {
+                console.error('RADIO_NOT_FILLED_SEPARATE', field);
+                missedRequiredRadios.push(field);
+              }
+            }
+          } else {
+            // for values grouped
+            let isFilled = false;
+            const options = radioGroup.options;
+            const formValue: RegExp | undefined = getBestFieldMatch(
+              [
+                ...savedAnswersState.getSavedAnswers(
+                  radioGroup.radioLabel,
+                  INPUT_TYPES.DROPDOWN
+                ),
+                ...DROPDOWN_MAPPER,
+              ],
+              radioGroup.radioLabel,
+              options
+            ) as RegExp | undefined;
+
+            if (formValue) {
+              const chosenOption = options.find(({ label }) =>
+                formValue?.test(filterAlNums(label))
               );
 
-            let isFilled = false;
-            if (formValue) {
-              isFilled = await (
-                components.radioComponent as IRadioComponent
-              ).optionSelect(page, field);
+              if (chosenOption) {
+                // need wait so it fills
+                isFilled = await (
+                  components.radioComponent as IRadioComponent
+                ).optionSelect(page, chosenOption);
+              }
             }
 
-            if (!isFilled) {
-              console.error('RADIO_NOT_FILLED_SEPARATE', field);
-              missedRequiredRadios.push(field);
+            if (!isFilled && radioGroup.radioLabel.includes('*')) {
+              console.error('RADIO_NOT_FILLED_GROUPED', radioGroup.radioLabel);
+              missedRequiredDropdown.push(radioGroup);
             }
           }
-        } else {
-          // for values grouped
-          let isFilled = false;
-          const formValue =
-            savedAnswersState.getSavedAnswer(
-              radioGroup.radioLabel,
-              INPUT_TYPES.DROPDOWN
-            ) ??
-            DROPDOWN_MAPPER.find(({ matcher }) =>
-              matcher.test(filterAlNums(radioGroup.radioLabel))
-            );
-
-          if (formValue) {
-            const options = radioGroup.options;
-            const chosenOption = options.find(({ label }) =>
-              formValue?.optionMatcher?.test(filterAlNums(label))
-            );
-
-            if (chosenOption) {
-              // need wait so it fills
-              isFilled = await (
-                components.radioComponent as IRadioComponent
-              ).optionSelect(page, chosenOption);
-            }
-          }
-
-          if (!isFilled && radioGroup.radioLabel.includes('*')) {
-            console.error('RADIO_NOT_FILLED_GROUPED', radioGroup.radioLabel);
-            missedRequiredDropdown.push(radioGroup);
-          }
+        } catch (e) {
+          console.error('RADIO_NOT_FILLED_ERROR', radioGroup.radioLabel, e);
         }
-      } catch (e) {
-        console.error('RADIO_NOT_FILLED_ERROR', radioGroup.radioLabel, e);
       }
     }
   }
 
-  return {
+  const result: IGeneralFillResponse = {
     [INPUT_TYPES.TEXT]: missedRequiredTexts,
     [INPUT_TYPES.DROPDOWN]: missedRequiredDropdown,
     [INPUT_TYPES.RADIO]: missedRequiredRadios,
-    isResumeUploaded: Boolean(!resumeError && resumeField),
+    isResumeUploaded: !resumeError,
   };
+  setLastFillResult(result);
+  return result;
 }
