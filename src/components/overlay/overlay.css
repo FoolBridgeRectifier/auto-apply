@@ -1,0 +1,91 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  background: #ffe4e1;
+  font-family: monospace;
+  font-weight: 600;
+  color: black;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  overflow: hidden;
+  -webkit-app-region: drag;
+  user-select: none;
+}
+.counter {
+  font-size: 11px;
+  text-align: center;
+  line-height: 1.5;
+}
+.main-row {
+  display: flex;
+  gap: 6px;
+  flex: 1;
+  min-height: 0;
+}
+.col-left {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 80px;
+}
+.col-right {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+button {
+  padding: 5px 10px;
+  background: #ffe4e1;
+  border: 2px solid #808080;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: monospace;
+  font-weight: 600;
+  color: black;
+  -webkit-app-region: no-drag;
+}
+.col-left button {
+  flex: 1;
+}
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+#autofillBtn {
+  background: #fde8d0;
+}
+#autofillBtn:hover {
+  background: #fbd8b8;
+}
+#submitBtn {
+  background: #d6ecd6;
+}
+#submitBtn:hover {
+  background: #c2dfc2;
+}
+#askAiBtn {
+  background: #d6e4ec;
+}
+#askAiBtn:hover {
+  background: #c0d4e0;
+}
+textarea {
+  flex: 1;
+  width: 100%;
+  resize: none;
+  font-family: monospace;
+  font-size: 11px;
+  border: 2px solid #808080;
+  border-radius: 6px;
+  padding: 4px;
+  background: #fff8f7;
+  -webkit-app-region: no-drag;
+  user-select: text;
+}

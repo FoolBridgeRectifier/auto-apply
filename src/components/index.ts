@@ -1,38 +1,34 @@
-import { Page, BrowserContext } from '@playwright/test';
-import { chromium } from '@playwright/test';
+import type { Page, BrowserContext } from 'playwright';
+import { chromium } from 'playwright-extra';
 import { spawn, spawnSync } from 'child_process';
 import os from 'os';
 import path from 'path';
 import fs from 'fs';
-import { syncFile } from './helpers';
 import {
   startOverlayServer,
   setOverlayPage,
   incrementOverlayCounts,
   setWindowAlwaysOnTop,
-} from './overlay-server';
-
-const syncedData = syncFile();
-let applicationsTotal = syncedData.applicationsTotal;
-let applicationsToday = syncedData.applicationsToday;
-let applicationsTwoDays = syncedData.applicationsTwoDays;
+} from './server';
+import { getApplicationCounts, persistIncrement } from '../states/job-counter';
+import {
+  isOverlayLaunched,
+  setOverlayLaunched,
+  getOverlayPid,
+  setOverlayPid,
+  hasTrackedContext,
+  addTrackedContext,
+} from '../states/overlay-process';
 
 export const incrementApplications = () => {
-  syncedData.incrementApplications();
-  applicationsTotal += 1;
-  applicationsToday += 1;
-  applicationsTwoDays += 1;
+  persistIncrement();
   incrementOverlayCounts();
 };
 
-let _overlayLaunched = false;
-let _overlayPid: number | undefined;
-const trackedContexts = new Set<BrowserContext>();
-
 export const closeOverlay = () => {
-  if (_overlayPid === undefined) return;
-  const pid = _overlayPid;
-  _overlayPid = undefined;
+  const pid = getOverlayPid();
+  if (pid === undefined) return;
+  setOverlayPid(undefined);
   try {
     if (process.platform === 'win32') {
       spawnSync('taskkill', ['/F', '/PID', String(pid), '/T'], {
@@ -47,8 +43,8 @@ export const closeOverlay = () => {
 process.once('exit', closeOverlay);
 
 const trackContext = (context: BrowserContext) => {
-  if (trackedContexts.has(context)) return;
-  trackedContexts.add(context);
+  if (hasTrackedContext(context)) return;
+  addTrackedContext(context);
   // Any new page or popup in this context becomes the current target
   context.on('page', (page) => setOverlayPage(page));
 };
@@ -58,14 +54,10 @@ export const autofillButton = async (page: Page) => {
   setOverlayPage(page);
   trackContext(page.context());
 
-  const port = await startOverlayServer({
-    applicationsTotal,
-    applicationsToday,
-    applicationsTwoDays,
-  });
+  const port = await startOverlayServer(getApplicationCounts());
 
-  if (!_overlayLaunched) {
-    _overlayLaunched = true;
+  if (!isOverlayLaunched()) {
+    setOverlayLaunched();
     const windowWidth = 320;
     const screen = getPrimaryScreenSize();
     const posX = screen.width - windowWidth - 10;
@@ -81,7 +73,7 @@ export const autofillButton = async (page: Page) => {
       ],
       { detached: true, stdio: 'ignore' }
     );
-    _overlayPid = cp.pid;
+    setOverlayPid(cp.pid);
     cp.unref();
     setWindowAlwaysOnTop();
   }
@@ -108,7 +100,7 @@ const getPrimaryScreenSize = (): { width: number; height: number } => {
   return { width: 1920, height: 1080 };
 };
 
-const getChromePath = (): string => {
+export const getChromePath = (): string => {
   const candidates = [
     process.env['PROGRAMFILES'] &&
       path.join(

@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test';
+import type { Page } from 'playwright';
 import { TIMEOUTS } from '../config';
 
 export const basicButtonClick = async (

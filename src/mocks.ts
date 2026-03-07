@@ -1,4 +1,4 @@
-import { Page, BrowserContext } from '@playwright/test';
+import type { Page, BrowserContext } from 'playwright';
 import path from 'path';
 import fs from 'fs';
 import { APPLICATION_FLOWS } from './enums';
@@ -58,8 +58,14 @@ const findAllHars = (type: string | null): string[] => {
 // explicitly named files first, falling back to mtime sort.
 const findWorkdayHars = (): [string, string | undefined] => {
   const recordDir = path.join(process.cwd(), 'record');
-  const personalInfoPath = path.join(recordDir, 'workdayjobs_personal_info.har');
-  const remainingPagesPath = path.join(recordDir, 'workdayjobs_remaining_pages.har');
+  const personalInfoPath = path.join(
+    recordDir,
+    'workdayjobs_personal_info.har'
+  );
+  const remainingPagesPath = path.join(
+    recordDir,
+    'workdayjobs_remaining_pages.har'
+  );
   if (fs.existsSync(personalInfoPath) && fs.existsSync(remainingPagesPath)) {
     return [personalInfoPath, remainingPagesPath];
   }
@@ -100,7 +106,7 @@ export const jobRightApplicationMock = async (
   }
 };
 
-export const applicationPageMock = async (
+const applicationPageMock = async (
   page: Page,
   type: string | null = isMocked
 ) => {
@@ -199,7 +205,10 @@ const normalizeWorkdayKey = (url: string): string => {
   const { pathname } = new URL(url);
   // Old format: /wday/calypso/cxs/jobapplication/relx/.../<endpoint>
   // New format: /wday/cxs/relx/.../<endpoint>
-  if (pathname.includes('/cxs/jobapplication/') || pathname.includes('/wday/cxs/'))
+  if (
+    pathname.includes('/cxs/jobapplication/') ||
+    pathname.includes('/wday/cxs/')
+  )
     return pathname.split('/').pop() ?? pathname;
   return pathname;
 };
@@ -454,7 +463,9 @@ export const applicationPageHarMock = async (
         const primary = useRemainingPagesHar
           ? (remainingPagesIndex ?? personalInfoIndex)
           : personalInfoIndex;
-        const fallback = useRemainingPagesHar ? personalInfoIndex : remainingPagesIndex;
+        const fallback = useRemainingPagesHar
+          ? personalInfoIndex
+          : remainingPagesIndex;
         const cached = primary.get(key) ?? fallback?.get(key);
         if (!cached) console.log('[HAR MISS]', route.request().method(), key);
 
@@ -471,7 +482,9 @@ export const applicationPageHarMock = async (
               const props = schema?.definitions?.workExperience?.properties;
               if (props?.endDate) props.endDate.hidden = false;
               body = JSON.stringify(schema);
-            } catch { /* leave body as-is if unparseable */ }
+            } catch {
+              /* leave body as-is if unparseable */
+            }
           }
         }
 
@@ -482,14 +495,21 @@ export const applicationPageHarMock = async (
           try {
             const schema = JSON.parse(body);
             const props = schema?.definitions?.primaryQuestionnaire?.properties;
-            const sponsorshipDetail = props?.['1b72f70184a9100154d213eec5ef0000'];
+            const sponsorshipDetail =
+              props?.['1b72f70184a9100154d213eec5ef0000'];
             if (sponsorshipDetail) {
-              const requestAnswers = JSON.parse(route.request().postData() ?? '{}');
-              const sponsorshipAnswer = requestAnswers['61b7a768c89d10015478ffd3ea4b0000'];
-              sponsorshipDetail.hidden = sponsorshipAnswer?.descriptor !== 'Yes';
+              const requestAnswers = JSON.parse(
+                route.request().postData() ?? '{}'
+              );
+              const sponsorshipAnswer =
+                requestAnswers['61b7a768c89d10015478ffd3ea4b0000'];
+              sponsorshipDetail.hidden =
+                sponsorshipAnswer?.descriptor !== 'Yes';
               body = JSON.stringify(schema);
             }
-          } catch { /* leave body as-is if unparseable */ }
+          } catch {
+            /* leave body as-is if unparseable */
+          }
         }
 
         await route.fulfill({

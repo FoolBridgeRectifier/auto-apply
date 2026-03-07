@@ -3,7 +3,7 @@ import fs from 'fs';
 import { IDropdownComponent, ISavedAnswers } from './interfaces';
 import { filterAlNums } from './general/helpers';
 import { IGeneralFillResponse } from './general/interfaces';
-import { Locator, Page } from '@playwright/test';
+import type { Page } from 'playwright';
 import { INPUT_TYPES } from '../enums';
 import { dropdownComponent as defaultDropdownComponent } from './general/components';
 
@@ -162,44 +162,4 @@ export const waitForFilled = async (
       console.error('Cannot save Field', field);
     }
   }
-};
-
-// Bind button onclick
-export const bindSaveToButton = async (
-  functionText: string = 'saveOnContinue',
-  page: Page,
-  button: Locator,
-  missedFields: IGeneralFillResponse,
-  dropdownComponent: IDropdownComponent
-) => {
-  await page.exposeFunction(functionText, async () => {
-    await waitForFilled(page, missedFields, dropdownComponent);
-  });
-
-  await button.evaluate((el, functionText) => {
-    el?.addEventListener(
-      'click',
-      async (event) => {
-        // 1. Kill the current event path
-        event.preventDefault();
-        event.stopImmediatePropagation();
-
-        // 2. Run your custom logic
-        const win = window as typeof window & {
-          [key: string]: () => Promise<void>;
-        };
-
-        if (win[functionText]) {
-          await win[functionText]();
-        }
-
-        // 3. Manually re-trigger the click to let "super" events fire
-        (el as HTMLButtonElement).click();
-      },
-      {
-        once: true,
-        capture: true,
-      }
-    );
-  }, functionText);
 };

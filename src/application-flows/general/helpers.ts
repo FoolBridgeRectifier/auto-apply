@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test';
+import type { Locator, Page } from 'playwright';
 import { resumeInputTypes } from './constants';
 import { INPUT_TYPES } from '../../enums';
 import { TIMEOUTS } from '../../../config';

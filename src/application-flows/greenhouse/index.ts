@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test';
+import type { Page } from 'playwright';
 import { selectors } from './selectors';
 import { TIMEOUTS } from '../../../config';
 import { generalFill } from '../general';

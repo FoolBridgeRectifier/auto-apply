@@ -122,16 +122,8 @@
       {
         "label": "yes - i consent to receiving text messages",
         "value": ""
-      },
-      {
-        "label": "i currently work here",
-        "value": ""
-      },
-      {
-        "label": "i have a preferred name",
-        "value": ""
       }
     ],
-    "exclude": ["i currently work here"]
+    "exclude": ["i currently work here", "I have a preferred name"]
   }
 }

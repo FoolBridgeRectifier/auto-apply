@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test';
+import type { Page } from 'playwright';
 import {
   filterAlNums,
   getBestFieldMatch,
@@ -15,7 +15,7 @@ import { IDropdownComponent, IRadioComponent } from '../interfaces';
 import { syncSavedAnswers } from '../helpers';
 import { IGeneralFillResponse } from './interfaces';
 import { openChatGpt } from '../../page-loaders';
-import { setLastFillResult } from '../../components/fill-state';
+import { setLastFillResult } from '../../states/fill';
 
 const savedAnswersState = syncSavedAnswers();
 

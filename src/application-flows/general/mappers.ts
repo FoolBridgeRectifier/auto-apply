@@ -30,8 +30,6 @@ const regexMatchers = {
     /(?:\basian\b(?!.*hispanic)|not\s*hispanic(?:\s*or\s*latino)?)/i,
 };
 
-export const FORM_NAME_CHECK = regexMatchers.firstName; // reused as regex
-
 export const TEXT_MAPPER = [
   {
     matcher: regexMatchers.firstName,

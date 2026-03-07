@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test';
+import type { Locator, Page } from 'playwright';
 import { TIMEOUTS } from '../../../config';
 import { IDropdownComponent, IRadioComponent } from '../interfaces';
 import { filterAlNums } from './helpers';

@@ -1,4 +1,4 @@
-import { IGeneralFillResponse } from '../application-flows/general/interfaces';
+import type { IGeneralFillResponse } from '../../application-flows/general/interfaces';
 
 let lastFillResult: IGeneralFillResponse | null = null;
 
